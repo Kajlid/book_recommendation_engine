@@ -62,13 +62,16 @@ def getBook(url: str):
         author_tag = soup.find('span', class_='ContributorLink__name', attrs={'data-testid': 'name'})
         author = author_tag.text.strip() if author_tag else 'Author not found'
     
-            
+        # Find the average rating
+        rating_tag = soup.find('div', class_='RatingStatistics__rating')
+        rating = rating_tag.text.strip() if rating_tag else 'Rating not found'
             
         # Print information 
         print(f"Title: {title}\n")
         print(f"Description: {description}\n")
         print(f"Genres: {genres}\n")
-        print(f"Author: {author}")
+        print(f"Author: {author}\n")
+        print(f"Average Rating: {rating}\n")
         
         return [title, description, genres]
     
