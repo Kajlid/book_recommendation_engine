@@ -57,12 +57,18 @@ def getBook(url: str):
             label = span.find('span', class_='Button__labelItem')
             if label:
                 genres.append(label.text.strip())
+                
+        # Find the author name
+        author_tag = soup.find('span', class_='ContributorLink__name', attrs={'data-testid': 'name'})
+        author = author_tag.text.strip() if author_tag else 'Author not found'
+    
             
             
-        # Print information
+        # Print information 
         print(f"Title: {title}\n")
         print(f"Description: {description}\n")
         print(f"Genres: {genres}\n")
+        print(f"Author: {author}")
         
         return [title, description, genres]
     
