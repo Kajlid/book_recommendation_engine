@@ -49,12 +49,22 @@ def getBook(url: str):
         else:
             description = 'Description not found'
             
+        # Find all genre links
+        genre_spans = soup.find_all('span', class_='BookPageMetadataSection__genreButton')
+        
+        genres = []
+        for span in genre_spans:
+            label = span.find('span', class_='Button__labelItem')
+            if label:
+                genres.append(label.text.strip())
+            
             
         # Print information
         print(f"Title: {title}\n")
         print(f"Description: {description}\n")
+        print(f"Genres: {genres}\n")
         
-        return title
+        return [title, description, genres]
     
     else:
         print("Failed to fetch the page. Status code:", response.status_code)
