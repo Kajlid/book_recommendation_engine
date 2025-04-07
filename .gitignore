@@ -1,3 +1,6 @@
 .history
 *.config
 *.lst
+*.xml
+*.class
+*.jar 
