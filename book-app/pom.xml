@@ -26,10 +26,17 @@
           <version>8.17.4</version>
       </dependency>
 
+      <!-- Elasticsearch Core Client -->
       <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.5.13</version>
+          <groupId>org.elasticsearch</groupId>
+          <artifactId>elasticsearch</artifactId>
+          <version>8.17.4</version> <!-- or your desired version -->
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+          <version>4.5.13</version>
       </dependency>
 
       <dependency>
