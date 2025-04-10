@@ -5,4 +5,4 @@
 *.jar
 *.properties
 *.xml
-book-app/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+*.class
