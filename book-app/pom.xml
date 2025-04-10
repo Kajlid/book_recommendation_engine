@@ -146,6 +146,16 @@
                 </archive>
             </configuration>
         </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version> <!-- or any recent version -->
+            <configuration>
+                <source>11</source> <!-- or 17, depending on your JDK -->
+                <target>11</target>
+            </configuration>
+        </plugin>
     </plugins>
 </build>
 
