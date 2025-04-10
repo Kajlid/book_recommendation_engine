@@ -34,23 +34,22 @@ public class Database {
     }
 
     public static void writeData(Book book) {
-        /*
-        RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(new HttpHost("localhost", 9200, "http"))
-        );
-        */
        // Connect to Elasticsearch
         RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
 
         RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
 
+        // Establish client connection to elastic
         ElasticsearchClient client = new ElasticsearchClient(transport);
 
-        try{
+        try {
+            // Add a index to elastic
             IndexResponse response = client.index(IndexRequest.of(i -> i
                 .index("test-index")
                 .document(book)
             ));
+
+            // Get book ID in elastic
             System.out.println("Indexed with ID: " + response.id());
         }
         catch(Exception e) {
@@ -64,9 +63,5 @@ public class Database {
         } catch (IOException e) {
             System.err.println("Error closing RestClient: " + e.getMessage());
         }
-
-
-        // docker run -d --name elasticsearch   -p 9200:9200 -p 9300:9300   -e discovery.type=single-node   -e "xpack.security.enabled=false"   -e "xpack.security.http.ssl.enabled=false"   docker.elastic.co/elasticsearch/elasticsearch:8.11.2
-
     }
 }
