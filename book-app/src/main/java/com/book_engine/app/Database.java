@@ -24,10 +24,20 @@ public class Database {
     public static void readData() {
         try{
             Gson gson = new Gson();
-            JsonReader reader = new JsonReader(new FileReader("../example_books/1.json"));
-            Book book = gson.fromJson(reader, Book.class);
-            System.out.println(book.title);
-            writeData(book);  
+            for (int i=0; i<100; i++){
+                JsonReader reader = new JsonReader(new FileReader(String.format("../example_books/%d.json", i)));
+                Book book = gson.fromJson(reader, Book.class);
+
+                if ((book.title).equals("Title not found")) {    // if book has no title, skip to next
+                    continue; 
+                }
+                book.setRating();
+                System.out.println(book);
+                System.out.println(book.title);
+                writeData(book);
+                
+            }
+            
         } catch (FileNotFoundException e){
             System.out.println("File not found: " + e);
         }

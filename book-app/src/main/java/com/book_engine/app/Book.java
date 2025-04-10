@@ -2,33 +2,31 @@ package com.book_engine.app;
 
 import java.util.ArrayList;
 
-public class Book{
-    private String content;
-    String title;
-    String author;
-    String description;
-    float average_rating;
-    ArrayList<String> genres;
+public class Book {
+    public String title;
+    public String author;
+    public String description;
+    public String average_rating;
+    public ArrayList<String> genres;
+    public Float rating = null;
 
-    public Book() {}
-
-    public Book(String title, String author, String description, float average_rating, String genres){
-        this.title = title;
-        this.author = author;
-        this.description = description;
-        this.average_rating = average_rating;
-        this.genres = makeGenreList(genres);
+    @Override
+    public String toString() {
+        return "Book{title='" + this.title + "', genres=" + this.genres + "rating= " + this.rating + "}";
     }
 
-    private ArrayList<String> makeGenreList(String genres){
-        return new ArrayList<String>();
+    /**
+     * Function to handle null ratings 
+     */
+    public void setRating(){
+        try {
+            this.rating = Float.parseFloat(this.average_rating);
+        } catch (Exception e){
+            this.rating = null;
+            System.out.println("Was unable to find rating for book: " + this.title);
+        }
+       
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+   
 }
