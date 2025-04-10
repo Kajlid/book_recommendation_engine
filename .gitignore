@@ -1,6 +1,8 @@
 .history
 *.config
 *.lst
+*.txt
+*.jar
+*.properties
 *.xml
-*.class
-*.jar 
+book-app/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
