@@ -44,8 +44,10 @@ public class Database {
 
         // Allow user to search for books in elastic
         while (true) { 
-            search();    
+            search();
         }
+        
+        
     }
 
     public static void writeData(Book book) {
@@ -58,25 +60,49 @@ public class Database {
         ElasticsearchClient client = new ElasticsearchClient(transport);
 
         try {
+            // Look for existing index
+            boolean indexExists = client.indices().exists(e -> e.index("test-index")).value();
+
+            // Create index if non-existant
+            if (!indexExists) {
+                client.indices().create(c -> c
+                    .index("test-index")
+                    .mappings(m -> m 
+                        .properties("title", p -> p 
+                            .text(t -> t 
+                                .fields("keyword", k -> k.keyword(kv -> kv))
+                            )
+                        )
+                        .properties("author", p -> p.text(t -> t)) 
+                        .properties("description", p -> p.text(t -> t))
+                        .properties("average_rating", p -> p.text(t -> t))
+                        .properties("genres", p -> p.keyword(k -> k))
+                        .properties("content", p -> p.text(t -> t))   
+                    )
+                );
+                System.out.println("Created index with custom mapping.");
+            }
+
             // Add a index to elastic
             IndexResponse response = client.index(IndexRequest.of(i -> i
                 .index("test-index")
+                .id(generateId(book))
                 .document(book)
             ));
 
             // Get book ID in elastic
-            System.out.println("Indexed with ID: " + response.id());
+            //System.out.println("Indexed with ID: " + response.id());
         }
         catch(Exception e) {
             System.out.println("Error occurred while indexing: " + e.getMessage());
             e.printStackTrace();
-        }   
-
-        // Close client
-        try {
-            restClient.close();
-        } catch (IOException e) {
-            System.err.println("Error closing RestClient: " + e.getMessage());
+        } finally {
+            // Close client
+            try {
+                restClient.close();
+            } catch (IOException e) {
+                System.out.println("Error closing RestClient: " + e.getMessage());
+            }
         }
     }
 
@@ -92,7 +118,7 @@ public class Database {
         ElasticsearchClient client = new ElasticsearchClient(transport);
     
         try {
-            // Build and send search request
+            // Search
             SearchResponse<Book> response = client.search(s -> s
                     .index("test-index")
                     .query(q -> q
@@ -104,16 +130,16 @@ public class Database {
                     Book.class
             );
     
-            // Print matching books
             List<Hit<Book>> hits = response.hits().hits();
             if (hits.isEmpty()) {
                 System.out.println("No books found matching: " + searchTerm);
             } else {
                 System.out.println("Books found:");
                 for (Hit<Book> hit : hits) {
+                    // Get and print results
                     Book book = hit.source();
                     if (book != null) {
-                        System.out.println("- " + book.title);
+                        System.out.println(book);
                     }
                 }
             }
@@ -128,5 +154,13 @@ public class Database {
                 System.err.println("Error closing RestClient: " + e.getMessage());
             }
         }
+    } 
+
+    private static String generateId(Book book) {
+        // Use title and author to generate a unique ID
+        String title = book.getTitle() != null ? book.getTitle().toLowerCase().replaceAll("\\s+", "_") : "untitled";
+        String author = book.getAuthor() != null ? book.getAuthor().toLowerCase().replaceAll("\\s+", "_") : "unknown";
+        return title + "_" + author;
     }
+    
 }
