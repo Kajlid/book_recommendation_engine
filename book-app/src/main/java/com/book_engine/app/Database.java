@@ -35,15 +35,11 @@ public class Database {
                 }
                 book.setRating();
                 writeData(book);  
-                
             }
-            
         } catch (FileNotFoundException e){
             System.out.println("File not found: " + e);
         }
 
-        Book book = getBookById(3);     // test
-        System.out.println(book);
         
     }
 
@@ -65,6 +61,7 @@ public class Database {
                 .id(customID)
                 .document(book)
             ));
+            title2id.put(book.title, Integer.parseInt(customID));
             System.out.println("Indexed with ID: " + response.id());
         }
         catch(Exception e) {
@@ -126,46 +123,6 @@ public class Database {
         
     }
 
-    public static Book getBookById(int id){
-        RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        ElasticsearchClient client = new ElasticsearchClient(transport);
-
-        // TODO: Implement id2title
-
-        Book book = null;
-        try{
-            SearchRequest searchRequest = new SearchRequest.Builder()
-                .index("test-index")  
-                .query(q -> q
-                    .match(m -> m
-                        .field("id")  // TODO: not id
-                        .query(id) 
-                    )
-                )
-                .build();
-
-            SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
-            for (Hit<Book> hit : searchResponse.hits().hits()) {
-                book = hit.source();
-                System.out.println("Found book: " + book.title);
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Close client
-        try {
-            restClient.close();
-        } catch (IOException e) {
-            System.err.println("Error closing RestClient: " + e.getMessage());
-        }
-
-        return book;
-        
-    }
 
     
 }
