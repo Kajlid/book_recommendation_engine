@@ -6,7 +6,7 @@ import java.util.List;
 public class Tokenizer {
 
     public static List<String> tokenize(String text) {
-        return Arrays.asList(text.toLowerCase().split("\\W+"));  // split on non-word characters
+        return Arrays.asList(text.toLowerCase().split("\\W+"));   // split on non-word characters
     }
 
 
