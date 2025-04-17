@@ -9,10 +9,13 @@ public class Book {
     public String average_rating;
     public ArrayList<String> genres;
     public Float rating = null;
+    public double score = 0;
+    public String id;
+    public String index;
 
     @Override
     public String toString() {
-        return "Book{title='" + this.title + "', genres=" + this.genres + "rating= " + this.rating + "}";
+        return "Book{title='" + this.title + "', genres=" + this.genres + "rating= " + this.rating + "id=" + this.id + "}";
     }
 
     /**

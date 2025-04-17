@@ -21,7 +21,8 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 public class Database {
     private int currentID = 0;
     public HashMap<String, Integer> title2id = new HashMap<String, Integer>();
-    private String indexName = "index";
+    private static String indexName = "index";
+    public static ArrayList<Book> books;
 
     // Constructor
     public Database() {
@@ -64,36 +65,33 @@ public class Database {
      * Put book object into index 
      */
     public void writeData(Book book) {
-       // Connect to Elasticsearch
+        // Connect to Elasticsearch
         RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
         RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         ElasticsearchClient client = new ElasticsearchClient(transport);
+    
         try {
-            String customID = String.valueOf(currentID++);
             IndexResponse response = client.index(IndexRequest.of(i -> i
                 .index(indexName)
-                .id(customID)
                 .document(book)
             ));
-            title2id.put(generateId(book), Integer.parseInt(customID));
-            System.out.println("Indexed with ID: " + response.id());
-        }
-        catch(Exception e) {
+    
+        } catch(Exception e) {
             System.out.println("Error occurred while indexing: " + e.getMessage());
             e.printStackTrace();
         }   
-
+    
         // Close client
         try {
             restClient.close();
         } catch (IOException e) {
             System.err.println("Error closing RestClient: " + e.getMessage());
         }
-
-
     }
+    
 
-    public void getData() {
+    public static ArrayList<Book> getData() {
+        ArrayList<Book> bookList = new ArrayList<>();
         // Connect to Elasticsearch and retrieve all book titles
         RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
         RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -120,8 +118,13 @@ public class Database {
             // Process all search hits
             for (Hit<Book> hit : searchResponse.hits().hits()) {
                 Book book = hit.source();
-                System.out.println("Found book: " + book.title);
+                // System.out.println("Found book: " + book.title);
+                book.id = hit.id();
+                // System.out.println("hit id: " + book.id);
+                bookList.add(book);
             }
+
+            return bookList;
         }
 
         catch (IOException e) {
@@ -134,6 +137,8 @@ public class Database {
         } catch (IOException e) {
             System.err.println("Error closing RestClient: " + e.getMessage());
         }
+
+        return new ArrayList<>();     // return empty list if retrieving data fails
         
     }
 
