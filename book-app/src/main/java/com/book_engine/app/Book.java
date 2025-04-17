@@ -11,7 +11,6 @@ public class Book {
     public Float rating = null;
     public double score = 0;
     public String id;
-    public String index;
 
     @Override
     public String toString() {

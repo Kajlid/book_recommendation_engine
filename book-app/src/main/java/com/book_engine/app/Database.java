@@ -120,6 +120,7 @@ public class Database {
                 Book book = hit.source();
                 // System.out.println("Found book: " + book.title);
                 book.id = hit.id();
+                book.score = hit.score();
                 // System.out.println("hit id: " + book.id);
                 bookList.add(book);
             }

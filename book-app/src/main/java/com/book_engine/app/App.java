@@ -15,8 +15,8 @@ public class App {
         database.books = Database.getData();
 
         BookRecommender.setBookScore("Potter is waiting nervously fantasy");
-        // for (Book b: database.books) {
-        //     System.out.println(b.score);
-        // }
+        for (Book b: Database.getData()) {
+            System.out.println(b.score);
+        }
     }
 }

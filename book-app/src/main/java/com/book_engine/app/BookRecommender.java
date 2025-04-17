@@ -15,10 +15,10 @@ import org.elasticsearch.index.mapper.TextSearchInfo.TermVector;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.cat.CountResponse;
-import co.elastic.clients.elasticsearch.core.TermvectorsResponse;
 import co.elastic.clients.elasticsearch.core.termvectors.Term;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.elasticsearch.core.*;
 
 
 public class BookRecommender {
@@ -26,6 +26,10 @@ public class BookRecommender {
     private static double alpha = 0.5;
     private static double beta = 2;
     private static double gamma = 3;
+
+    private static final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
+    private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+    private static final ElasticsearchClient client = new ElasticsearchClient(transport);
 
     public static void setBookScore(String query) throws IOException {
         ArrayList<Book> bookList = new ArrayList<>();
@@ -72,16 +76,11 @@ public class BookRecommender {
 
         double total_score = alpha * title_score + beta * genre_score + gamma * description_score;
 
-        b.score = total_score;
+        updateScore(b.id, total_score);
+        
     }
 
     private static double getTFIDFScore(String indexName, String docId, String term) throws IOException {
-    
-        // Initialize RestClient and ElasticsearchClient
-        RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        ElasticsearchClient client = new ElasticsearchClient(transport);
-    
         // Get term vectors from Elasticsearch for the specified document and field
         TermvectorsResponse response = client.termvectors(tv -> tv
             .index(indexName)
@@ -113,6 +112,32 @@ public class BookRecommender {
     
         // Calculate and return the TF-IDF score
         return tf * idf;
+    }
+
+    public static void updateScore(String bookId, double newScore) {
+        Map<String, Object> updateDoc = new HashMap<>();
+        updateDoc.put("score", newScore);
+        // System.out.println(newScore);
+        // System.out.println(updateDoc);
+
+        try {
+            UpdateResponse<Book> response = client.update(UpdateRequest.of(u -> u
+                .index("index")
+                .id(bookId)
+                .doc(updateDoc)
+            ), Book.class);
+
+            // System.out.println("Response from ElasticSearch: " + response.result());
+
+            // Force refresh
+            // client.indices().refresh(r -> r.index("books"));
+        }
+
+
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     
 
