@@ -23,6 +23,11 @@ public class Database {
     public HashMap<String, Integer> title2id = new HashMap<String, Integer>();
     private String indexName = "index";
 
+    // Constructor
+    public Database() {
+        // Load/Create data from Elastic
+        this.readData();
+    }
 
     public static String generateId(Book book) {
         // Use title and author to generate a unique ID
@@ -42,7 +47,7 @@ public class Database {
                 JsonReader reader = new JsonReader(new FileReader(String.format("../example_books/%d.json", i)));
                 Book book = gson.fromJson(reader, Book.class);
 
-                if ((book.title).equals("Title not found") | title2id.get(book.title) == null) {    // if book has no title or already exists, skip to next
+                if ((book.title).equals("Title not found") | title2id.get(book.title) != null) {    // if book has no title or already exists, skip to next
                     continue; 
                 }
                 book.setRating();
@@ -61,11 +66,8 @@ public class Database {
     public void writeData(Book book) {
        // Connect to Elasticsearch
         RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
-
         RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-
         ElasticsearchClient client = new ElasticsearchClient(transport);
-
         try {
             String customID = String.valueOf(currentID++);
             IndexResponse response = client.index(IndexRequest.of(i -> i
@@ -154,7 +156,7 @@ public class Database {
             // Handler for response
             if (response.found()) {
                 book = response.source();
-                System.out.println("Book name " + book.title);
+                // System.out.println("Book name " + book.title);
             } else {
                 System.out.println("Book not found");
             }
@@ -162,7 +164,13 @@ public class Database {
             
             System.out.println("Error: " + e);
         }
-
+        // Close client
+        try {
+            restClient.close();
+        } catch (IOException e) {
+            System.err.println("Error closing RestClient: " + e.getMessage());
+        }
+        
         return book;
     }
     
