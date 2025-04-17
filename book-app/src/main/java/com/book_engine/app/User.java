@@ -16,7 +16,7 @@ public class User{
      */
     public void addBook(String bookid, Database db, Float rating){
         // get book object
-        int intid = db.title2id.get(bookid);
+        Integer intid = db.title2id.get(bookid);
         if (intid == null){
             return;
         }
