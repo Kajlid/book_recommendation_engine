@@ -97,6 +97,7 @@ public class Database {
 
     }
 
+
     /* This function should return all book objects written to ElasticSearch */
     // TODO: make it work to only return hits from specific user query from ElasticSearch
     public ArrayList<Book> getData() {
