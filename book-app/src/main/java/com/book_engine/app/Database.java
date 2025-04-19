@@ -19,7 +19,7 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 public class Database {
-    private static final String indexName = "index4";
+    public static final String indexName = "index4";
     private static RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);

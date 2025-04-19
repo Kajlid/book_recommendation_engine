@@ -66,14 +66,11 @@ public class BookRecommender {
             }
 
             // Set description_score
-            description_score += getTFIDFScore("index", b.id, word);
-            // System.out.println("score: " + description_score);
+            description_score += getTFIDFScore(Database.indexName, b.id, word);
         }
 
         double total_score = alpha * title_score + beta * genre_score + gamma * description_score;
-
         b.score = total_score;
-        
     }
 
     private static double getTFIDFScore(String indexName, String docId, String term) throws IOException {
@@ -109,37 +106,19 @@ public class BookRecommender {
         // Calculate and return the TF-IDF score
         return tf * idf;
     }
-
-    // public static void updateScore(String bookId, double newScore) {
-    //     Map<String, Object> updateDoc = new HashMap<>();
-    //     updateDoc.put("score", newScore);
-    //     // System.out.println(newScore);
-    //     // System.out.println(updateDoc);
-
-    //     try {
-    //         UpdateResponse<Book> response = client.update(UpdateRequest.of(u -> u
-    //             .index("index")
-    //             .id(bookId)
-    //             .doc(updateDoc)
-    //         ), Book.class);
-
-    //         // System.out.println("Response from ElasticSearch: " + response.result());
-
-    //         // Force refresh
-    //         // client.indices().refresh(r -> r.index("books"));
-    //     }
-
-
-    //     catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-
-    // }
     
-    public static void search(String query) {
-        // ArrayList<Book> relevantBooks = Database.getDataForQuery(query);
-        ArrayList<Book> relevantBooks = Database.getData();
-        System.out.println(relevantBooks.size());
+    public static void search(String query) throws IOException {
+        ArrayList<Book> relevantBooks = Database.getDataForQuery(query);
+        for (Book b : relevantBooks) {
+            setScore(b, query);
+        }
+
+        // Sort relevantBooks
+        Collections.sort(relevantBooks);
+
+        for (Book b : relevantBooks) {
+            System.out.println(b.title + ": " + b.score);
+        }
     }
 
 }
