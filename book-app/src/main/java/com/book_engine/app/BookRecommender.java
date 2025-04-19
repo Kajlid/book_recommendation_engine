@@ -31,12 +31,8 @@ public class BookRecommender {
     private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static final ElasticsearchClient client = new ElasticsearchClient(transport);
 
-    public static void setBookScore(String query) throws IOException {
-        ArrayList<Book> bookList = new ArrayList<>();
+    public static void setBookScore(String query, ArrayList<Book> bookList) throws IOException {
         try {
-            // Database db = new Database();
-            bookList = Database.books;
-
             for (Book b : bookList) {
                 setScore(b, query);
             }
@@ -76,7 +72,7 @@ public class BookRecommender {
 
         double total_score = alpha * title_score + beta * genre_score + gamma * description_score;
 
-        updateScore(b.id, total_score);
+        b.score = total_score;
         
     }
 
@@ -114,31 +110,36 @@ public class BookRecommender {
         return tf * idf;
     }
 
-    public static void updateScore(String bookId, double newScore) {
-        Map<String, Object> updateDoc = new HashMap<>();
-        updateDoc.put("score", newScore);
-        // System.out.println(newScore);
-        // System.out.println(updateDoc);
+    // public static void updateScore(String bookId, double newScore) {
+    //     Map<String, Object> updateDoc = new HashMap<>();
+    //     updateDoc.put("score", newScore);
+    //     // System.out.println(newScore);
+    //     // System.out.println(updateDoc);
 
-        try {
-            UpdateResponse<Book> response = client.update(UpdateRequest.of(u -> u
-                .index("index")
-                .id(bookId)
-                .doc(updateDoc)
-            ), Book.class);
+    //     try {
+    //         UpdateResponse<Book> response = client.update(UpdateRequest.of(u -> u
+    //             .index("index")
+    //             .id(bookId)
+    //             .doc(updateDoc)
+    //         ), Book.class);
 
-            // System.out.println("Response from ElasticSearch: " + response.result());
+    //         // System.out.println("Response from ElasticSearch: " + response.result());
 
-            // Force refresh
-            // client.indices().refresh(r -> r.index("books"));
-        }
+    //         // Force refresh
+    //         // client.indices().refresh(r -> r.index("books"));
+    //     }
 
 
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    //     catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
 
-    }
+    // }
     
+    public static void search(String query) {
+        // ArrayList<Book> relevantBooks = Database.getDataForQuery(query);
+        ArrayList<Book> relevantBooks = Database.getData();
+        System.out.println(relevantBooks.size());
+    }
 
 }

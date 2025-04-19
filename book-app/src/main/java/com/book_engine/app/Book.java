@@ -2,7 +2,7 @@ package com.book_engine.app;
 
 import java.util.ArrayList;
 
-public class Book {
+public class Book implements Comparable<Book> {
     public String title;
     public String author;
     public String description;
@@ -14,7 +14,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{title='" + this.title + "', genres=" + this.genres + "rating= " + this.rating + "id=" + this.id + "}";
+        return "Book{title='" + this.title + "', genres=" + this.genres + ", rating=" + this.rating + ", id=" + this.id + "}";
     }
 
     /**
@@ -27,8 +27,13 @@ public class Book {
             this.rating = null;
             System.out.println("Was unable to find rating for book: " + this.title);
         }
-       
     }
 
-   
+    /**
+     * Compare books based on score in descending order
+     */
+    @Override
+    public int compareTo(Book other) {
+        return Double.compare(other.score, this.score); // Descending
+    }
 }
