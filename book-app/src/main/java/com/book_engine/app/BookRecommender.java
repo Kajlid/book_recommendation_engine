@@ -23,9 +23,10 @@ import co.elastic.clients.elasticsearch.core.*;
 
 public class BookRecommender {
     
-    private static double alpha = 0.5;
-    private static double beta = 2;
-    private static double gamma = 3;
+    // Title contributes more to the search results
+    private static double alpha = 0.5;      // title weight
+    private static double beta = 0.4;         // genre weight
+    private static double gamma = 0.1;        // description weight
 
     private static final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -46,21 +47,30 @@ public class BookRecommender {
         double genre_score = 0;
         double description_score = 0;
         
+        // TODO: replace with tokenization method
+        String normalizedQuery = query.toLowerCase().trim();
+        String normalizedTitle = b.title.toLowerCase().trim();
+            
+        List<String> words = Arrays.asList(normalizedQuery.split("\\s+"));
+        List<String> titleToList = Arrays.asList(normalizedTitle.split("\\s+"));
         
-        List<String> words = Arrays.asList(query.split(" "));
-        List<String> titleToList = Arrays.asList(b.title.split(" "));
         ArrayList<String> genres = b.genres;
         
         for (String word: words) {
 
-            // Set title_score
-            boolean found_title = titleToList.stream().anyMatch(w -> w.equalsIgnoreCase(word));
+            // Set title_score 
+            boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
             if (found_title) {
                 title_score += 1;
             }
 
+            // If exact title match, boost score
+            if (normalizedTitle.equals(normalizedQuery)) {
+                title_score += 3; // bonus points for perfect title match
+            }
+
             // Set genre_score
-            boolean found_genre = genres.stream().anyMatch(w -> w.equalsIgnoreCase(word));
+            boolean found_genre = genres.stream().anyMatch(w -> w.toLowerCase().contains(word.toLowerCase()));
             if (found_genre) {
                 genre_score += 1;
             }
@@ -117,7 +127,7 @@ public class BookRecommender {
         Collections.sort(relevantBooks);
 
         for (Book b : relevantBooks) {
-            System.out.println(b.title + ": " + b.score);
+            System.out.println(b.title + ": " + b.score + " " + b.rating + " , Genre: " + b.genres);
         }
     }
 
