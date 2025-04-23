@@ -25,8 +25,11 @@ public class BookRecommender {
     
     // Title contributes more to the search results
     private static double alpha = 0.5;      // title weight
-    private static double beta = 0.4;         // genre weight
-    private static double gamma = 0.1;        // description weight
+    private static double beta = 0.3;         // genre weight
+    private static double gamma = 0.2;        // description weight
+    private static double randomBoost = 0.01;    // boost some random books with some probability
+
+    private static final Random random = new Random();
 
     private static final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -80,6 +83,7 @@ public class BookRecommender {
         }
 
         double total_score = alpha * title_score + beta * genre_score + gamma * description_score;
+
         b.score = total_score;
     }
 
@@ -123,11 +127,24 @@ public class BookRecommender {
             setScore(b, query);
         }
 
+        // TODO: is random surfing needed when user info is incorporated?
+        // Add some random books for diverse recommendation 
+        int numRandomBooks = 3;
+        double minRating = 4.0;
+        ArrayList<Book> randomBooks = Database.getRandomBooks(numRandomBooks, minRating);
+        for (Book rb : randomBooks) {
+            boolean alreadyIncluded = relevantBooks.stream().anyMatch(b -> b.id.equals(rb.id));
+            if (!alreadyIncluded) {
+                rb.score = random.nextDouble() * randomBoost; 
+                relevantBooks.add(rb);
+            }
+        }
+
         // Sort relevantBooks
         Collections.sort(relevantBooks);
 
         for (Book b : relevantBooks) {
-            System.out.println(b.title + ": " + b.score + " " + b.rating + " , Genre: " + b.genres);
+            System.out.println(b.title + ": " + b.score + " rating: " + b.rating + " , Genre: " + b.genres);
         }
     }
 

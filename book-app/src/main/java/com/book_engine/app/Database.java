@@ -148,7 +148,7 @@ public class Database {
             SearchRequest searchRequest = new SearchRequest.Builder()
                 .index(indexName)
                 .query(q -> q.multiMatch(m -> m.query(query).fields("title", "description", "genres")))
-                .size(500) // Limit the number of results
+                .size(500) // Limit the number of search results
                 .build();
 
             SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
@@ -167,4 +167,28 @@ public class Database {
         }
         return bookList;
     }
+
+    public static ArrayList<Book> getRandomBooks(int count, double minRating) {
+        // Make a random selection of {count} books with minimal rating minRating
+        ArrayList<Book> allBooks = getData();
+        ArrayList<Book> popularBooks = new ArrayList<>();
+
+        for (Book book : allBooks) {
+            if (book.rating >= minRating) {
+                popularBooks.add(book);
+            }
+        }
+
+        Collections.shuffle(popularBooks);
+
+        ArrayList<Book> selection = new ArrayList<>();
+        for (int i = 0; i < count && i < popularBooks.size(); i++) {
+            selection.add(popularBooks.get(i));
+        }
+
+        return selection;
+    }
+    
+
+    
 }
