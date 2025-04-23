@@ -1,0 +1,11 @@
+{
+  "title": "Differential Clinical Significance of Medical Information",
+  "description": "Modern Medicine desperately needs an absolute theoretical (logarithmic or exponential) basis to mathematically quantify the Significance of medical digital information (or data) that are stored in each patient’s digital records, to establish some necessary hierarchy or order in a way similar to the order achieved by the concept of “Indications” (for different forms of treatment etc) to the pre-hippocratic chaos of erratic personal arbitrary medical opinions, then heavily biased.If a quantification of medical information’s Differential Significance is achieved, then the following dangers can be (i) crucial, important medical information in small quantity, expressed in fewest bits (e.g. ‘Presence or Absence of spread of a cancer after staging investigations and procedures,’ ‘patient Alive or Dead’), may be hidden in a flooded ocean of large amounts of data (in GBs) much less important,(ii) deep learning diagnostic algorithms may not become efficient to recognize the sequential hierarchy of significance of heterogeneous medical digital data that should be taken into account in order to reach a safe and reasonable final conclusion.",
+  "genres": [
+    "Medicine",
+    "Science"
+  ],
+  "author": "I.C. Papachristos",
+  "average_rating": "5.00",
+  "url": "https://www.goodreads.com/book/show/29074833-differential-clinical-significance-of-medical-information"
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Foundations of Cryptography: Volume 1, Basic Tools",
+  "description": "Cryptography is concerned with the conceptualization, definition and construction of computing systems that address security concerns. This book presents a rigorous and systematic treatment of the foundational issues: defining cryptographic tasks and solving new cryptographic problems using existing tools. It focuses on the basic mathematical tools: computational difficulty (one-way functions), pseudorandomness and zero-knowledge proofs. Rather than describing ad-hoc approaches, this book emphasizes the clarification of fundamental concepts and the demonstration of the feasibility of solving cryptographic problems. It is suitable for use in a graduate course on cryptography and as a reference book for experts.",
+  "genres": [
+    "Mathematics",
+    "Computer Science",
+    "Reference",
+    "Nonfiction"
+  ],
+  "author": "Oded Goldreich",
+  "average_rating": "4.13",
+  "url": "https://www.goodreads.com/book/show/3415326-foundations-of-cryptography"
+}

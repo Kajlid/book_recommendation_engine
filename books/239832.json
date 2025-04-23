@@ -1,0 +1,16 @@
+{
+  "title": "The Math of Neural Networks",
+  "description": "There are many reasons why neural networks fascinate us and have captivated headlines in recent years. They make web searches better, organize photos, and are even used in speech translation. Heck, they can even generate encryption. At the same time, they are also mysterious and how exactly do they accomplish these things ? What goes on inside a neural network? On a high level, a network learns just like we do, through trial and error. This is true regardless if the network is supervised, unsupervised, or semi-supervised. Once we dig a bit deeper though, we discover that a handful of mathematical functions play a major role in the trial and error process. It also becomes clear that a grasp of the underlying mathematics helps clarify how a network learns. In the following chapters we will unpack the mathematics that drive a neural network. To do this, we will use a feedforward network as our model and follow input as it moves through the network.",
+  "genres": [
+    "Mathematics",
+    "Artificial Intelligence",
+    "Technology",
+    "Programming",
+    "Computer Science",
+    "Science",
+    "Nonfiction"
+  ],
+  "author": "Michael Taylor",
+  "average_rating": "4.15",
+  "url": "https://www.goodreads.com/book/show/36269984-the-math-of-neural-networks"
+}

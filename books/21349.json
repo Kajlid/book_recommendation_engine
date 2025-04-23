@@ -1,0 +1,11 @@
+{
+  "title": "Small Unmanned Aircraft: Theory and Practice",
+  "description": "Autonomous unmanned air vehicles (UAVs) are critical to current and future military, civil, and commercial operations. Despite their importance, no previous textbook has accessibly introduced UAVs to students in the engineering, computer, and science disciplines--until now. Small Unmanned Aircraft provides a concise but comprehensive description of the key concepts and technologies underlying the dynamics, control, and guidance of fixed-wing unmanned aircraft, and enables all students with an introductory-level background in controls or robotics to enter this exciting and important area.The authors explore the essential underlying physics and sensors of UAV problems, including low-level autopilot for stability and higher-level autopilot functions of path planning. The textbook leads the student from rigid-body dynamics through aerodynamics, stability augmentation, and state estimation using onboard sensors, to maneuvering through obstacles. To facilitate understanding, the authors have replaced traditional homework assignments with a simulation project using the MATLAB/Simulink environment. Students begin by modeling rigid-body dynamics, then add aerodynamics and sensor models. They develop low-level autopilot code, extended Kalman filters for state estimation, path-following routines, and high-level path-planning algorithms. The final chapter of the book focuses on UAV guidance using machine vision.Designed for advanced undergraduate or graduate students in engineering or the sciences, this book offers a bridge to the aerodynamics and control of UAV flight.",
+  "genres": [
+    "Nonfiction",
+    "Engineering"
+  ],
+  "author": "Randal W. Beard",
+  "average_rating": "4.19",
+  "url": "https://www.goodreads.com/book/show/11929698-small-unmanned-aircraft"
+}
