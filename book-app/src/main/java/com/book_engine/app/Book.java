@@ -34,6 +34,16 @@ public class Book implements Comparable<Book> {
      */
     @Override
     public int compareTo(Book other) {
-        return Double.compare(other.score, this.score); // Descending
+        int scoreComparison = Double.compare(other.score, this.score); // Descending order
+        if (scoreComparison != 0) {
+            return scoreComparison;
+        }
+        // If scores are equal, return book with highest rating
+        if (this.rating == null && other.rating == null) return 0;
+        if (this.rating == null) return 1; // Put books without rating lower
+        if (other.rating == null) return -1;
+
+        return Float.compare(other.rating, this.rating);
+
     }
 }
