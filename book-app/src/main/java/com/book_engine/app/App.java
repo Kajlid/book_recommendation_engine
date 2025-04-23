@@ -12,7 +12,6 @@ public class App {
     public static void main(String[] args) throws IOException {
         System.out.println("Search engine is starting indexing...");
         Database database = new Database();
-        database.readData();
         BookRecommender.search("romance");    // hardcoded for now
     }
 }
