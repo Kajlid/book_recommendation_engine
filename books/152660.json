@@ -1,0 +1,16 @@
+{
+  "title": "Grokking Algorithms An Illustrated Guide For Programmers and Other Curious People",
+  "description": "An algorithm is nothing more than a step-by-step procedure for solving a problem. The algorithms you'll use most often as a programmer have already been discovered, tested, and proven. If you want to take a hard pass on Knuth's brilliant but impenetrable theories and the dense multi-page proofs you'll find in most textbooks, this is the book for you. This fully-illustrated and engaging guide makes it easy for you to learn how to use algorithms effectively in your own programs.Grokking Algorithms is a disarming take on a core computer science topic. In it, you'll learn how to apply common algorithms to the practical problems you face in day-to-day life as a programmer. You'll start with problems like sorting and searching. As you build up your skills in thinking algorithmically, you'll tackle more complex concerns such as data compression or artificial intelligence. Whether you're writing business software, video games, mobile apps, or system utilities, you'll learn algorithmic techniques for solving problems that you thought were out of your grasp. For example, you'll be able to:Write a spell checker using graph algorithmsUnderstand how data compression works using Huffman codingIdentify problems that take too long to solve with naive algorithms, and attack them with algorithms that give you an approximate answer insteadEach carefully-presented example includes helpful diagrams and fully-annotated code samples in Python. By the end of this book, you will know some of the most widely applicable algorithms as well as how and when to use them.",
+  "genres": [
+    "Programming",
+    "Computer Science",
+    "Technology",
+    "Algorithms",
+    "Nonfiction",
+    "Software",
+    "Technical"
+  ],
+  "author": "Aditya Y. Bhargava",
+  "average_rating": "4.42",
+  "url": "https://www.goodreads.com/book/show/22847284-grokking-algorithms-an-illustrated-guide-for-programmers-and-other-curio"
+}
