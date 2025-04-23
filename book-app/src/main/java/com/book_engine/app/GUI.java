@@ -32,6 +32,9 @@ public class GUI extends JFrame {
     JTextArea bookContentTextArea = new JTextArea(); 
     // Pane inside bookContextArea to be able to scroll through description of a booj
     JScrollPane bookContentPane = new JScrollPane(bookContentTextArea);
+
+    // Search: input field and search button
+    JTextField searchInput = new JTextField(30);
     
     
     Database database;
@@ -52,16 +55,17 @@ public class GUI extends JFrame {
 
         
 
-        // Search: input field and search button
-        JTextField searchInput = new JTextField(40);
+        
         Action searchAction = getSearchAction();
 
+        searchInput.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         searchInput.registerKeyboardAction( searchAction, 
                             "", 
                             KeyStroke.getKeyStroke( "ENTER" ), 
                             JComponent.WHEN_FOCUSED );
                             
         JButton searchButton = new JButton("search");
+        searchButton.addActionListener(e -> search());
 
         // Set up menu
         menuBar.add(searchMenu);
@@ -95,6 +99,7 @@ public class GUI extends JFrame {
         p1.add(welcomeLabel, BorderLayout.PAGE_START);
         p1.add(searchInput, BorderLayout.LINE_START);
         p1.add(searchButton, BorderLayout.CENTER);
+        p1.setBackground(new java.awt.Color(255, 226, 254));
         mainPanel.add(p1, BorderLayout.PAGE_START);
 
         ArrayList<Book> books = new ArrayList<Book>();
@@ -108,12 +113,12 @@ public class GUI extends JFrame {
         searchResultPanel.add(searchResultPane);
 
         searchResultPanel.setOpaque(true);
-        searchResultPanel.setBackground(Color.WHITE);
         searchResultPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         mainPanel.add(searchResultPane, BorderLayout.CENTER);
         mainPanel.add(bookContentPane, BorderLayout.PAGE_END);
-       
+
+        mainPanel.setBackground(new java.awt.Color(255, 191, 254));
         setVisible(true); // Make it visible
     }
 
@@ -125,15 +130,26 @@ public class GUI extends JFrame {
             public void actionPerformed( ActionEvent e ) {
                 // Empty the results window
                 searchResultPanel.removeAll();
+
+                
                 
                 // Create a new label and display it
                 JLabel label = new JLabel("info");
                 searchResultPanel.add(label);
                 revalidate();
                 repaint();
+                search();
+                
             }
         };
     } 
+
+    private void search(){
+        String query = searchInput.getText();
+        System.out.println("searching " + query);
+
+        
+    }
 
 
     /**
