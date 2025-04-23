@@ -23,7 +23,7 @@ public class Database {
     private static RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);
-    private HashMap<String, Integer> title2id = new HashMap<>();
+    public HashMap<String, Integer> title2id = new HashMap<>();
 
     // Constructor
     public Database() throws ElasticsearchException, IOException {
@@ -119,7 +119,7 @@ public class Database {
     /**
      * Retrieve a book by its ID from Elasticsearch
      */
-    public Book getBookByID(int bookid) {
+    public static Book getBookByID(int bookid) {
         Book book = null;
         try {
             // Get book from Elastic by its ID

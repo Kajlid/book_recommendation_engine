@@ -22,14 +22,22 @@ import co.elastic.clients.elasticsearch.core.*;
 
 
 public class BookRecommender {
-    
     // Title contributes more to the search results
     private static double alpha = 0.5;      // title weight
     private static double beta = 0.3;         // genre weight
     private static double gamma = 0.2;        // description weight
-    private static double randomBoost = 0.01;    // boost some random books with some probability
+
+    private static double randomBoost = 0.01;    // boost some random books with this weight
 
     private static final Random random = new Random();
+
+    // TODO: replace with actual user
+    static User user;
+    static {
+        user = new User("temp_user");
+        user.books.put(1, 4.5f);
+        user.books.put(43, 3.2f);
+    }
 
     private static final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -49,6 +57,7 @@ public class BookRecommender {
         double title_score = 0;
         double genre_score = 0;
         double description_score = 0;
+        double preference_bonus = 0;   // user preference bonus
         
         // TODO: replace with tokenization method
         String normalizedQuery = query.toLowerCase().trim();
@@ -60,7 +69,6 @@ public class BookRecommender {
         ArrayList<String> genres = b.genres;
         
         for (String word: words) {
-
             // Set title_score 
             boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
             if (found_title) {
@@ -69,7 +77,7 @@ public class BookRecommender {
 
             // If exact title match, boost score
             if (normalizedTitle.equals(normalizedQuery)) {
-                title_score += 3; // bonus points for perfect title match
+                title_score += 5; // bonus points for perfect title match
             }
 
             // Set genre_score
@@ -82,7 +90,34 @@ public class BookRecommender {
             description_score += getTFIDFScore(Database.indexName, b.id, word);
         }
 
-        double total_score = alpha * title_score + beta * genre_score + gamma * description_score;
+        // ---- User influence bonus ----
+        for (Map.Entry<Integer, Float> entry : user.books.entrySet()) {
+            if (entry.getValue() >= 4.0) {  // only consider books user liked
+                Book readBook = Database.getBookByID(entry.getKey());   // !make sure this id matches ElasticSearch id
+                if (readBook != null) {
+                    String readTitle = readBook.title.toLowerCase();
+                    ArrayList readGenres = readBook.genres;
+
+                    // Small bonus for title containing similar words as liked book
+                    for (String titleWord : readTitle.split("\\s+")) {
+                        if (normalizedTitle.contains(titleWord)) {
+                            preference_bonus += 0.1;  
+                        }
+                    }
+
+                    // Small bonus for books with similar genres as user's read and liked books with that genre
+                    for (String genre : b.genres) {
+                        if (readGenres.contains(genre.toLowerCase().trim())) {
+                            preference_bonus += 0.1;
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        double total_score = alpha * title_score + beta * genre_score + gamma * description_score + preference_bonus;
 
         b.score = total_score;
     }
@@ -122,16 +157,28 @@ public class BookRecommender {
     }
     
     public static void search(String query) throws IOException {
-        ArrayList<Book> relevantBooks = Database.getDataForQuery(query);
+        ArrayList<Book> relevantBooks = Database.getDataForQuery(query);   // TODO: call this retrievedBooks when incorporating user
+        // ArrayList<Book> retrievedBooks = Database.getDataForQuery(query);
+        // ArrayList<Book> relevantBooks = new ArrayList<>();
+
+        // Only include book if the user hasn't read it
+        // TODO: incorporate the right id
+        /*for (Book b : retrievedBooks) {
+            if (!user.books.containsKey(b.id)) {
+                relevantBooks.add(b); 
+            }
+        } */
+
         for (Book b : relevantBooks) {
             setScore(b, query);
         }
 
-        // TODO: is random surfing needed when user info is incorporated?
         // Add some random books for diverse recommendation 
         int numRandomBooks = 3;
         double minRating = 4.0;
+
         ArrayList<Book> randomBooks = Database.getRandomBooks(numRandomBooks, minRating);
+        randomBooks.sort((b1, b2) -> Double.compare(b2.rating, b1.rating));    // sort the random books by rating
         for (Book rb : randomBooks) {
             boolean alreadyIncluded = relevantBooks.stream().anyMatch(b -> b.id.equals(rb.id));
             if (!alreadyIncluded) {

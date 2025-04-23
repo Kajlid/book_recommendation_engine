@@ -14,20 +14,20 @@ public class User{
     /**
      * Add the book to books 
      */
-    // public void addBook(String bookid, Database db, Float rating){
-    //     // get book object
-    //     int intid = db.title2id.get(bookid);
-    //     if (intid == null){
-    //         return;
-    //     }
-    //     Book book = db.getBookByID(intid); // get same book object as in index
-    //     if (book == null){
-    //         return;
-    //     }
-    //     books.put(intid, rating);
+    public void addBook(String bookid, Database db, Float rating){
+        // get book object
+        Integer intid = db.title2id.get(bookid);
+        if (intid == null){
+            return;
+        }
+        Book book = db.getBookByID(intid); // get same book object as in index
+        if (book == null){
+            return;
+        }
+        books.put(intid, rating);
         
 
-    // }
+    }
 
     
 }
