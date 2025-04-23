@@ -16,6 +16,18 @@ public class Book {
     }
 
     /**
+     * Displays the content of the book in a formatted way
+     * @return String formatted book details
+     */
+    public String displayContents() {
+        String title = this.title + " by " + this.author + "\n";
+        String rating = "Rating: " + this.rating + "★\n";
+        String line = "-----------------------------------------------------\n";
+        String description = this.description + "\n";
+        return title + rating + line + description;
+    }
+
+    /**
      * Function to handle null ratings 
      */
     public void setRating(){

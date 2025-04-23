@@ -8,6 +8,8 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import java.util.*;
 import java.io.*;
+import com.book_engine.app.Database;
+import com.book_engine.app.Book;
 
 
 public class GUI extends JFrame {
@@ -19,11 +21,13 @@ public class GUI extends JFrame {
     JMenuItem quitItem = new JMenuItem("Quit");
 
     public JPanel resultWindow = new JPanel();
-    public JTextArea docTextView = new JTextArea();
-    private JScrollPane resultPane = new JScrollPane(resultWindow);
+    public JTextArea docTextView = new JTextArea(); //The content of a specified book
+    private JScrollPane resultPane = new JScrollPane(resultWindow); // Contains the search results 
     private JScrollPane docViewPane = new JScrollPane(docTextView);
+    Database database = null;
 
-    public GUI() {
+    public GUI(Database database) {
+        this.database = database;
         setTitle("Book recommendation system");
         setSize(600, 650);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -72,6 +76,7 @@ public class GUI extends JFrame {
         docTextView.setText("\n  The contents of the document will appear here.");
         docTextView.setLineWrap(true);
         docTextView.setWrapStyleWord(true);
+        docTextView.setEditable(false); // non-editable content of book 
 
         // Action for quitting
         quitItem.addActionListener(e -> System.exit(0));
@@ -79,22 +84,22 @@ public class GUI extends JFrame {
         JLabel welcomeLabel = new JLabel("Welcome to the book recommendation engine");
         
         // Logo
-        JPanel p1 = new JPanel();
+        JPanel p1 = new JPanel(); // First JPanel 
         p1.setPreferredSize(new Dimension(120, 50));
-        //p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
         p1.add(welcomeLabel, BorderLayout.PAGE_START);
         p1.add(searchInput, BorderLayout.LINE_START);
         p1.add(searchButton, BorderLayout.LINE_END);
         mainPanel.add(p1, BorderLayout.PAGE_START);
 
-        // Results panel
-        //JPanel p2 = new JPanel();
-        //p2.add(resultPane, BorderLayout.CENTER);
+        ArrayList<Book> books = new ArrayList<Book>();
+        books.add(database.getBookByID(0));
+        books.add(database.getBookByID(1));
+        books.add(database.getBookByID(2));
 
-        for (int i = 0; i < 50; i++) {
-            JLabel label = new JLabel("Hello World!");
-            resultWindow.add(label);
-        }
+
+        JScrollPane resultPane = displayBookResults(books); // get search result Pane
+        resultWindow.add(resultPane);
+
         
         resultWindow.setOpaque(true);
         resultWindow.setBackground(Color.WHITE);
@@ -112,10 +117,39 @@ public class GUI extends JFrame {
         setVisible(true); // Make it visible
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new GUI();
+
+    /**
+     * Adds all books to a JScrollPane that contains a listener for any selected books
+     */
+    public JScrollPane displayBookResults(ArrayList<Book> books){
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        for (int i = 0; i < books.size(); i++) {
+            listModel.addElement(i + " " + books.get(i).title);
+        }
+
+        JList<String> resultList = new JList<>(listModel);
+        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        resultList.setLayoutOrientation(JList.VERTICAL);
+        resultList.setVisibleRowCount(-1); 
+        resultList.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        resultList.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        resultList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selected = resultList.getSelectedValue();
+                Integer booknr = Integer.parseInt(selected.split(" ")[0]);
+                displayBookContent(books.get(booknr));
+                //System.out.println("User selected: " + selected);
+            }
         });
+        JScrollPane newResultPane = new JScrollPane(resultList);
+        newResultPane.setPreferredSize(new Dimension(400, 450));
+        return newResultPane;
+    }
+
+    public void displayBookContent(Book book){
+        docTextView.setText(book.displayContents());
+        repaint();
+        revalidate();
     }
 
     
