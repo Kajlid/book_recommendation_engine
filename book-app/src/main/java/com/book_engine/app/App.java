@@ -8,5 +8,7 @@ public class App {
     public static void main(String[] args) {
         System.out.println("Search engine is starting indexing...");
         Database database = new Database();
+        database.readData();
+
     }
 }

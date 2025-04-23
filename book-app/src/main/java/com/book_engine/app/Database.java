@@ -43,7 +43,7 @@ public class Database {
     public void readData() {
         try{
             Gson gson = new Gson();
-            for (int i=0; i<100; i++){
+            for (int i=0; i<100; i++) {
                 JsonReader reader = new JsonReader(new FileReader(String.format("../example_books/%d.json", i)));
                 Book book = gson.fromJson(reader, Book.class);
 
@@ -51,7 +51,11 @@ public class Database {
                     continue; 
                 }
                 book.setRating();
-                writeData(book);  
+                book.setCombinedString();
+
+                System.out.println(book);
+
+                // writeData(book);  
             }
         } catch (FileNotFoundException e){
             System.out.println("File not found: " + e);
@@ -93,7 +97,12 @@ public class Database {
 
     }
 
-    public void getData() {
+
+    /* This function should return all book objects written to ElasticSearch */
+    // TODO: make it work to only return hits from specific user query from ElasticSearch
+    public ArrayList<Book> getData() {
+        ArrayList<Book> bookList = new ArrayList<>();
+
         // Connect to Elasticsearch and retrieve all book titles
         RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
         RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
@@ -121,7 +130,10 @@ public class Database {
             for (Hit<Book> hit : searchResponse.hits().hits()) {
                 Book book = hit.source();
                 System.out.println("Found book: " + book.title);
+                bookList.add(book);
             }
+
+            return bookList;
         }
 
         catch (IOException e) {
@@ -134,6 +146,7 @@ public class Database {
         } catch (IOException e) {
             System.err.println("Error closing RestClient: " + e.getMessage());
         }
+        return new ArrayList<>();
         
     }
 
