@@ -15,12 +15,13 @@ public class Book implements Comparable<Book> {
     @Override
     public String toString() {
         return "Book{title='" + this.title + "', genres=" + this.genres + ", rating=" + this.rating + ", id=" + this.id + "}";
+
     }
 
     /**
      * Function to handle null ratings 
      */
-    public void setRating(){
+    public void setRating() {
         try {
             this.rating = Float.parseFloat(this.average_rating);
         } catch (Exception e){
