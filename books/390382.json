@@ -1,0 +1,16 @@
+{
+  "title": "Frankenstein",
+  "description": "\"Frankenstein\", la célèbre et terrifiante histoire d'un monstre artificiellement créé par l'homme, a hanté l'imagination des gens du monde entier, depuis sa première apparition, en 1888. Cet ouvrage demeure, encore aujourd'hui, supérieur, à la fois sur le plan littéraire et sur celui de la fiction d'épouvante, à toutes les œuvres similaires qu'il a d'ailleurs inspirées. Très favorablement par les critiques de l'époque, qui en soulignèrent la puissance d'imagination et l'intensité des situations dramatiques : nous dirions aujourd'hui «suspense»... le livre n'a rien perdu de son intérêt avec le recul du temps.",
+  "genres": [
+    "Horror",
+    "Fiction",
+    "Science Fiction",
+    "Gothic",
+    "Fantasy",
+    "School",
+    "Literature"
+  ],
+  "author": "Mary Wollstonecraft Shelley",
+  "average_rating": "3.89",
+  "url": "https://www.goodreads.com/book/show/983247.Frankenstein"
+}
