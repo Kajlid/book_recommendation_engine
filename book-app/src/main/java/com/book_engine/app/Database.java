@@ -27,7 +27,7 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 
 public class Database {
-    public static final String indexName = "temp_id";
+    public static final String indexName = "index";
     private static RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);
@@ -58,9 +58,14 @@ public class Database {
         System.out.println("Reading the data");
         try {
             Gson gson = new Gson();
-            for (int i = 0; i < 100; i++) {
-                // TODO: index all books in books folder
-                JsonReader reader = new JsonReader(new FileReader(String.format("../example_books/%d.json", i)));
+            //File folder = new File("../books/%d.json");
+          
+            int CONST = 392186;
+            for (int i = 0; i <= CONST; i++) {
+                if (i % 1000 == 0) {
+                    System.out.println("Reading file: " + i + " of " + CONST);
+                }
+                JsonReader reader = new JsonReader(new FileReader(String.format("../books/%d.json", i)));
                 Book book = gson.fromJson(reader, Book.class);
 
                 // Skip if title is not found or already exists in title2id
@@ -116,11 +121,17 @@ public class Database {
             SearchRequest searchRequest = new SearchRequest.Builder()
                 .index(indexName)
                 .query(q -> q.matchAll(m -> m)) // Match all documents
-                .size((int) totalDocs)  // Retrieve all documents
+                .size((int) 10000)  // Retrieve all documents
                 .build();
 
-            SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
-
+            //SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
+            SearchResponse<Book> searchResponse = null;
+            try {
+                searchResponse = client.search(searchRequest, Book.class);
+            } catch (ElasticsearchException e) {
+                System.err.println("Elasticsearch error: " + e.response());
+                e.printStackTrace();
+            }
             // Process the search hits
             for (Hit<Book> hit : searchResponse.hits().hits()) {
                 Book book = hit.source();
