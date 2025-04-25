@@ -143,7 +143,7 @@ public class GUI extends JFrame {
                 searchResultPanel.removeAll();
 
                 // Create a new label and display it
-                JLabel label = new JLabel("info");
+                JLabel label = new JLabel();
                 searchResultPanel.add(label);
                 revalidate();
                 repaint();
