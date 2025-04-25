@@ -3,7 +3,9 @@ package com.book_engine.app;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -13,28 +15,37 @@ import com.google.gson.stream.JsonReader;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.CountRequest;
+import co.elastic.clients.elasticsearch.core.CountResponse;
+import co.elastic.clients.elasticsearch.core.GetResponse;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 
+
 public class Database {
-    public static final String indexName = "index4";
+    public static final String indexName = "temp_id";
     private static RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);
-    public HashMap<String, Integer> title2id = new HashMap<>();
+    public HashMap<String, String> title2id = new HashMap<>();
 
     // Constructor
     public Database() throws ElasticsearchException, IOException {
         boolean indexExists = client.indices().exists(e -> e.index(indexName)).value();
         if (!indexExists) {
             this.readData(); // If index doesn't exist, load data from JSON files
+            System.out.println("Created a new index");
+        } else {
+            System.out.println("Using existing index");
         }
     }
 
     // Generate a unique ID based on the book title and author
-    public static String generateId(Book book) {
+    public String generateId(Book book) {
         String title = book.title != null ? book.title.toLowerCase().replaceAll("\\s+", "_") : "untitled";
         String author = book.author != null ? book.author.toLowerCase().replaceAll("\\s+", "_") : "unknown";
         return title + "_" + author;
@@ -44,9 +55,11 @@ public class Database {
      * Reads data from Json-file and adds books to Elasticsearch
      */
     public void readData() {
+        System.out.println("Reading the data");
         try {
             Gson gson = new Gson();
             for (int i = 0; i < 100; i++) {
+                // TODO: index all books in books folder
                 JsonReader reader = new JsonReader(new FileReader(String.format("../example_books/%d.json", i)));
                 Book book = gson.fromJson(reader, Book.class);
 
@@ -73,10 +86,15 @@ public class Database {
                 client.indices().create(c -> c.index(indexName)); // Create the index if it doesn't exist
             }
 
-            IndexResponse response = client.index(IndexRequest.of(i -> i
+            book.id = generateId(book);
+            title2id.put(generateId(book), book.id);
+
+            client.index(IndexRequest.of(i -> i
                 .index(indexName)
+                .id(book.id)
                 .document(book)
             ));
+            
         } catch (Exception e) {
             System.out.println("Error occurred while indexing: " + e.getMessage());
             e.printStackTrace();
@@ -86,7 +104,7 @@ public class Database {
     /**
      * Retrieve all book data from Elasticsearch
      */
-    public static ArrayList<Book> getData() {
+    public ArrayList<Book> getData() {
         ArrayList<Book> bookList = new ArrayList<>();
         try {
             // Count total number of documents in the index
@@ -106,7 +124,6 @@ public class Database {
             // Process the search hits
             for (Hit<Book> hit : searchResponse.hits().hits()) {
                 Book book = hit.source();
-                book.id = hit.id();   // Set the book ID
                 book.score = hit.score(); // Set the score
                 bookList.add(book);
             }
@@ -119,18 +136,19 @@ public class Database {
     /**
      * Retrieve a book by its ID from Elasticsearch
      */
-    public static Book getBookByID(int bookid) {
+    public Book getBookByID(String bookid) {
         Book book = null;
         try {
             // Get book from Elastic by its ID
             GetResponse<Book> response = client.get(g -> g
                 .index(indexName)
-                .id(Integer.toString(bookid)), Book.class);
+                .id(bookid), Book.class);
 
             if (response.found()) {
                 book = response.source();
             } else {
                 System.out.println("Book not found");
+                System.out.println(bookid);
             }
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -141,7 +159,7 @@ public class Database {
     /**
      * Retrieve books filtered by a query from Elasticsearch
      */
-    public static ArrayList<Book> getDataForQuery(String query) {
+    public ArrayList<Book> getDataForQuery(String query) {
         ArrayList<Book> bookList = new ArrayList<>();
         try {
             // Perform a multi_match search query on relevant fields
@@ -168,7 +186,7 @@ public class Database {
         return bookList;
     }
 
-    public static ArrayList<Book> getRandomBooks(int count, double minRating) {
+    public ArrayList<Book> getRandomBooks(int count, double minRating) {
         // Make a random selection of {count} books with minimal rating minRating
         ArrayList<Book> allBooks = getData();
         ArrayList<Book> popularBooks = new ArrayList<>();
