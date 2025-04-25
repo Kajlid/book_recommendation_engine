@@ -1,11 +1,9 @@
 package com.book_engine.app;
-import java.util.ArrayList;
-import com.book_engine.app.Database;
 import java.util.HashMap;
 
 public class User{
     public String username;
-    public HashMap<Integer, Float> books = new HashMap<Integer, Float>(); // bookid to personal rating
+    public HashMap<String, Float> books = new HashMap<String, Float>(); // bookid to personal rating
 
     public User(String name){
         this.username = name;
@@ -13,21 +11,22 @@ public class User{
 
     /**
      * Add the book to books 
+     * @param book Book object to be added
+     * @param db Database object to get the book id
+     * @param rating User rating of the book
      */
-    public void addBook(String bookid, Database db, Float rating){
-        // get book object
-        Integer intid = db.title2id.get(bookid);
-        if (intid == null){
-            return;
-        }
-        Book book = db.getBookByID(intid); // get same book object as in index
-        if (book == null){
-            return;
-        }
-        books.put(intid, rating);
-        
+    public void addBook(Book book, Database db, Float rating){
+        // get book object id
+        String stringid = db.generateId(book);
 
+        // Handle invalid id
+        if (stringid == null){
+            return;
+        }
+        Book bookdb = db.getBookByID(stringid); // get same book object as in index
+        if (bookdb == null){
+            return;
+        }
+        books.put(stringid, rating);
     }
-
-    
 }

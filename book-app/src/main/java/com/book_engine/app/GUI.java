@@ -1,17 +1,40 @@
 package com.book_engine.app;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.util.*;
-import java.io.*;
-import com.book_engine.app.Database;
-import com.book_engine.app.Book;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneLayout;
+import javax.swing.border.EmptyBorder;
 
 
+/**
+ * Class GUI that handles the graphical interface and makes 
+ * calls to the BookRecommender
+*/
 public class GUI extends JFrame {
 
     // Menus
@@ -37,10 +60,11 @@ public class GUI extends JFrame {
     JTextField searchInput = new JTextField(30);
     
     
-    Database database;
+    BookRecommender bookRec;
 
-    public GUI(Database database) {
-        this.database = database;
+    public GUI(BookRecommender bookRec) { 
+        //this.database = database;
+        this.bookRec = bookRec;
 
         // Set up the window attributes
         setTitle("Book recommendation system");
@@ -48,13 +72,9 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null); 
         
-        
         // Initialize main panel attributes and add to window
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         add(mainPanel);
-
-        
-
         
         Action searchAction = getSearchAction();
 
@@ -73,13 +93,14 @@ public class GUI extends JFrame {
         menuBar.add(quitItem);
         setJMenuBar(menuBar);
 
-
+        // Search result styling
         searchResultPanel.setLayout(new BoxLayout(searchResultPanel, BoxLayout.Y_AXIS));
         searchResultPane.setLayout(new ScrollPaneLayout());
-        searchResultPanel.setBorder( new EmptyBorder(10,10,10,10) );
-        searchResultPane.setPreferredSize( new Dimension(400, 450));
-        bookContentPane.setPreferredSize( new Dimension(400, 200));
-
+        searchResultPanel.setBorder(new EmptyBorder(10,10,10,10));
+        searchResultPane.setPreferredSize(new Dimension(400, 450));
+        
+        // Book content styling
+        bookContentPane.setPreferredSize(new Dimension(400, 200));
         bookContentTextArea.setText("\n  The contents of the document will appear here.");
         bookContentTextArea.setFont(new Font("Times New Roman",Font.BOLD, 14));
         bookContentTextArea.setLineWrap(true);
@@ -94,7 +115,6 @@ public class GUI extends JFrame {
         JLabel welcomeLabel = new JLabel("Welcome to the book recommendation engine");
         welcomeLabel.setFont(new Font("Times New Roman", Font.BOLD, 16));
         
-        // Logo
         JPanel p1 = new JPanel(new BorderLayout(120, 50)); // First JPanel 
         p1.add(welcomeLabel, BorderLayout.PAGE_START);
         p1.add(searchInput, BorderLayout.LINE_START);
@@ -102,15 +122,6 @@ public class GUI extends JFrame {
         p1.setBackground(new java.awt.Color(255, 226, 254));
         mainPanel.add(p1, BorderLayout.PAGE_START);
 
-        ArrayList<Book> books = new ArrayList<Book>();
-        // TODO: get books from database
-        books.add(database.getBookByID(0));
-        books.add(database.getBookByID(1));
-        books.add(database.getBookByID(2));
-
-
-        JScrollPane searchResultPane = displayBookResults(books); // get search result Pane
-        searchResultPanel.add(searchResultPane);
 
         searchResultPanel.setOpaque(true);
         searchResultPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -131,8 +142,6 @@ public class GUI extends JFrame {
                 // Empty the results window
                 searchResultPanel.removeAll();
 
-                
-                
                 // Create a new label and display it
                 JLabel label = new JLabel("info");
                 searchResultPanel.add(label);
@@ -144,34 +153,56 @@ public class GUI extends JFrame {
         };
     } 
 
+    /**
+     * Function that is called every time a user makes a search 
+     * either by pressing ENTER or pressing search.
+     * First the results are retrieved from the BookRecommender
+     * then the searchResultPanel is updated with the new results
+     */
     private void search(){
         String query = searchInput.getText();
-        System.out.println("searching " + query);
-
+        ArrayList<Book> books;
+        try {
+            books = bookRec.search(query);
+            searchResultPanel.remove(searchResultPane);
+            searchResultPane = displayBookResults(books);
+            searchResultPanel.add(searchResultPane);
+            searchResultPanel.revalidate();
+            searchResultPanel.repaint();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
     }
 
 
     /**
      * Adds all books to a JScrollPane that contains a listener for any selected books
+     * @param books The list of books to be displayed
+     * @return JScrollPane containing the list of books
      */
-    public JScrollPane displayBookResults(ArrayList<Book> books){
+    public JScrollPane displayBookResults(ArrayList<Book> books) {
+        // List model to hold the book titles and authors
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (int i = 0; i < books.size(); i++) {
             listModel.addElement(i + " " + books.get(i).title + " - " + books.get(i).author);
         }
 
+        // Create a JList to display the book titles and authors
         JList<String> resultList = new JList<>(listModel);
-
         resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         resultList.setLayoutOrientation(JList.VERTICAL);
         resultList.setVisibleRowCount(-1); 
         resultList.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         resultList.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+       
+        // Add a listener to the list to handle book selection events
         resultList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selected = resultList.getSelectedValue();
                 Integer booknr = Integer.parseInt(selected.split(" ")[0]);
+                
+                // Display the content of the selected book in the text area
                 displayBookContent(books.get(booknr));
             }
         });
@@ -180,6 +211,10 @@ public class GUI extends JFrame {
         return newsearchResultPane;
     }
 
+    /**
+     * Display the content of a book in the text area
+     * @param book The book to be displayed
+     */
     public void displayBookContent(Book book){
         bookContentTextArea.setText(book.displayContents());
     }
