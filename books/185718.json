@@ -1,0 +1,11 @@
+{
+  "title": "Weighing the Odds: A Course in Probability and Statistics",
+  "description": "In this lively look at both subjects, David Williams convinces Mathematics students of the intrinsic interest of Statistics and Probability, and Statistics students that the language of Mathematics can bring real insight and clarity to their subject. He helps students build the intuition needed, in a presentation enriched with examples drawn from all manner of applications. Statistics chapters present both the Frequentist and Bayesian approaches, emphasizing Confidence Intervals rather than Hypothesis Test, and include Gibbs-sampling techniques for the practical implementation of Bayesian methods. A central chapter gives the theory of Linear Regression and ANOVA, and explains how MCMC methods allow greater flexibility in modeling. C or WinBUGS code is provided for computational examples and simulations.",
+  "genres": [
+    "Mathematics",
+    "Nonfiction"
+  ],
+  "author": "David      Williams",
+  "average_rating": "4.67",
+  "url": "https://www.goodreads.com/book/show/2602395-weighing-the-odds"
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Mrs. Jeeper's Creepy Christmas",
+  "description": "Key Features Description It's time for Bailey City's annual holiday decorating contest, but when Eddie starts spending all his time reading with the new library volunteer, his friends are sure something strange is going on. It's time for Bailey City's annual holiday decorating contest, but when Eddie starts spending all his time reading with the new library volunteer, his friends are sure something strange is going on. Product Details Item #: NTS504192 9780545041928 Paperback Book 112 Mystery and Suspense, Comedy and Humor 3 - 5 Lexile® 530L Guided Reading GR Level P DRA 34 - 38 ACR 3.6 \t \t \t \t \t \t \t \t \t \t \t \t \t\t \t\t\tThe Adventures of the Bailey School Kids®: Mrs. Jeepers' Creepy Christmas \t\t\t \t\t\t\t Paperback Book \t\t\t \t\t \t\t \t\t\t \t\t\t\t \t\t\t\t2.99 \t\t\t\tOut Of Stock \t\t\t\t \t\t\t\t \t\t\t\t\tOut Of Stock \t\t\t\t\t \t\t\t\t\t\t \t\t\t\t\t\tEmail me when back in stock \t\t\t\t\t \t\t\t\t\t \t\t\t\t \t\t\t\t \t\t\t \t\t \t \t \t\t \t\t\t \t Top \t \t \t \t\t{{#if inStock}} \t \t{{#if isSubscribe}} \t\t\t \t\t {{button.label}} \t\t \t\t\t{{else}} \t {{button.label}} \t\t {{/if}} \t\t{{/if}} \t {{#if isOutofStock}} \t \t\t \t \t\t\t {{oosMessage}} \t \t\t\t{{#if isTSO}} \t\t \t\t\t\t\t \t\t\t \t\t \t\t{{/if}} \t\t \t\t \t \t\t \t {{/if}} \t {{#if isLearnMore}} \t\t{{#if learnMoreUrl}} \t \t \t \t \t{{/if}} \t{{#if learnMorePhone}} \t \t\tContact Us{{learnMoreNumber}} \t \t{{/if}} \t {{/if}} \t x \t\t\t \t\t\t \t\t\t \t\t\t\t \t\t\t \t\t\t \t\t\t \t\t\t\t \t\t\t\t \t\t\t\t \t\t\t\t\t \t\t\t\t\t\t \t\t\t\t\t\t \t\t\t\t\t \t\t\t\t \t\t\t\t \t\t\t\t \t\t\t\t \t\t\t\t \t\t\t\t \t \t\t What can we help you find? Search \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t\t \t\t\t\t\t \t\t\t\t\t \t\t\t\t \t\t\t \t\t\t \t\t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t \t\t\t\t \t \t PRIVACY POLICY TERMS OF USE TM ® & © 2021 Scholastic Inc. All Rights Reserved. if(_satellite) {_satellite.pageBottom();} commonUtil.enableMouseflow(); Key Features Item #: NTS504192 9780545041928 Paperback Book 112 Mystery and Suspense, Comedy and Humor 3 - 5 Lexile® 530L Guided Reading GR Level P DRA 34 - 38 ACR 3.6",
+  "genres": [
+    "Christmas",
+    "Mystery",
+    "Fiction",
+    "Chapter Books",
+    "Childrens"
+  ],
+  "author": "Debbie Dadey",
+  "average_rating": "3.95",
+  "url": "https://www.goodreads.com/book/show/3935703-mrs-jeeper-s-creepy-christmas"
+}

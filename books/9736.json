@@ -1,0 +1,13 @@
+{
+  "title": "PHP, MySQL y Apache",
+  "description": "Con este libro aprenderá, en un corto espacio de tiempo, a utilizar conjuntamente PHP, MySQL y Apache para crear aplicaciones y sitios Web interactivos y dinámicos gracias a las tres principales tecnologías de desarrollo para la Web de código libre. Cada una de las lecciones de este libro se basa en las anteriores, permitiéndole aprender los fundamentos de la programación en PHP, las bases de datos MySQL y el servidor web Apache, partiendo desde cero, paso a paso, y utilizando un lenguaje claro y sencillo. Con este libro aprenderá a instalar y configurar el lenguaje de programación PHP, MySQL y Apache, poner en marcha todas estas tecnologías para crear un sitio Web dinámico que trabaje con una base de datos remota, agregar un escaparate y un carrito de la compra a su sitio Web, optimizar sus bases de datos MySQL, restringir el acceso a sus aplicaciones, configurar un servidor Web seguro, entre muchas posibilidades más. Además, el CD-ROM adjunto al libro incluye un paquete de iniciación completo que le permitirá instalar todo el software que necesita para configurar un entorno estable para aprender, así como el código fuente de los ejemplos con los que podrá practicar y evaluar sus progresos.",
+  "genres": [
+    "Programming",
+    "Reference",
+    "Nonfiction",
+    "Technology"
+  ],
+  "author": "Julie C. Meloni",
+  "average_rating": "3.72",
+  "url": "https://www.goodreads.com/book/show/10870799-php-mysql-y-apache"
+}

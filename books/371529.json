@@ -1,0 +1,16 @@
+{
+  "title": "Bambi",
+  "description": "Disney Bambi",
+  "genres": [
+    "Classics",
+    "Fiction",
+    "Childrens",
+    "Animals",
+    "Fantasy",
+    "Picture Books",
+    "Young Adult"
+  ],
+  "author": "Bob Grant",
+  "average_rating": "4.16",
+  "url": "https://www.goodreads.com/book/show/831470.Bambi"
+}

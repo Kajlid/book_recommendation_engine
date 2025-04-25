@@ -1,0 +1,8 @@
+{
+  "title": "Deciphering Schematics",
+  "description": "Schematic diagram is the blueprint of all electronic circuits, the medium through which designs and functionalities are conveyed and understood. A schematic diagram has two fundamental Deciphering schematic diagrams, however, requires more than just a basic knowledge of the pictorial syntax (component symbols, reference designators, coded values, signal labels, wiring representation, etc.) employed in their creation. You need to know underlying principles that define the various circuit clusters which make up the overall design to have a proper grasp of their functional purposes.Hardware design has made tremendous progress in the last twenty years, spurred on by advances in component and PCB manufacturing processes, as well as the availability of more sophisticated and integrated electronic design tools (EDA). What took months to plan and design now requires only weeks to go from concept to realization—thanks to the phenomenal computing power of modern workstations and the vast accumulated arrays of proven circuit templates that permit quick mix-and-match with minimum tweaks and mods to achieve the desired results.For the aspiring electronics enthusiast, there is certainly much to gain in learning to read and interpret schematic diagrams, notwithstanding the challenges and pitfalls along the way. Hopefully this book will help lessen the pains and make the journey a tat bit more interesting and enjoyable.",
+  "genres": [],
+  "author": "MR Keng Tiong Ng",
+  "average_rating": "5.00",
+  "url": "https://www.goodreads.com/book/show/75412086-deciphering-schematics"
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Joe Celko's SQL for Smarties: Advanced SQL Programming",
+  "description": "In the SQL database community, Joe Celko is a well-known columnist and purveyor of valuable insights. In Joe Celko's SQL for Smarties: Advanced SQL Programming, he picks up where basic SQL training and experience leaves many database professionals and offers tips, techniques, and explanations that help readers extend their capabilities to top-tier SQL programming. Although Celko denies that the book is about database theory, he nevertheless alludes to theory often to buttress his practical points. This title is not for novices, as the author points out. Instead, its intended audience is SQL programmers with at least a year's experience. The book maintains a fine balance between technical discussion and practical explanation--picking hot topics and offering advice on a wide range of issues. The book uses ANSI SQL-89 as its baseline standard, with some mention of SQL-92 features. It does not, however, focus on any commercial product; this guide zeroes in on the SQL language. Celko covers all aspects of database design, optimization, and manipulation, with easy-to-understand explanations of key issues such as why not to use too many nulls, how to use practical normalization, and how to optimize queries.  This insightful text is manna for all the day-to-day SQL coders banging their heads over the language's subtle challenges. --Stephen W. Plain Topics covered: Database design and normalization, SQL data types, querying, grouping, set operations, optimization, data scaling, and encoding.",
+  "genres": [
+    "Programming",
+    "Computer Science",
+    "Reference",
+    "Technology",
+    "Software",
+    "Technical",
+    "Computers"
+  ],
+  "author": "Joe Celko",
+  "average_rating": "3.96",
+  "url": "https://www.goodreads.com/book/show/2076937.Joe_Celko_s_SQL_for_Smarties"
+}

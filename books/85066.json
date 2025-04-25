@@ -1,0 +1,13 @@
+{
+  "title": "Solr in Action",
+  "description": "Whether handling big data, building cloud-based services, or developing multi-tenant web applications, it's vital to have a fast, reliable search solution. Apache Solr is a scalable and ready-to-deploy open-source full-text search engine powered by Lucene. It offers key features like multi-lingual keyword searching, faceted search, intelligent matching, and relevancy weighting right out of the box.Solr in Action is the definitive guide to implementing fast and scalable search using Apache Solr 4. It uses well-documented examples ranging from basic keyword searching to scaling a system for billions of documents and queries. Readers will gain a deep understanding of how to implement core Solr capabilities such as faceted navigation through search results, matched snippet highlighting, field collapsing and search results grouping, spell checking, query auto-complete, querying by functions, and more.Purchase of the print book comes with an offer of a free PDF, ePub, and Kindle eBook from Manning. Also available is all code from the book.",
+  "genres": [
+    "Programming",
+    "Technical",
+    "Technology",
+    "Software"
+  ],
+  "author": "Trey Grainger",
+  "average_rating": "4.08",
+  "url": "https://www.goodreads.com/book/show/17364147-solr-in-action"
+}

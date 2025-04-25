@@ -1,0 +1,16 @@
+{
+  "title": "Cosmos",
+  "description": "The best-selling science book ever published in the English language, COSMOS is a magnificent overview of the past, present, and future of science. Brilliant and provocative, it traces today's knowledge and scientific methods to their historical roots, blending science and philosophy in a wholly energetic and irresistible way.",
+  "genres": [
+    "Science",
+    "Nonfiction",
+    "Astronomy",
+    "Physics",
+    "History",
+    "Space",
+    "Philosophy"
+  ],
+  "author": "Carl Sagan",
+  "average_rating": "4.40",
+  "url": "https://www.goodreads.com/book/show/370789.Cosmos"
+}

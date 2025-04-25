@@ -1,0 +1,15 @@
+{
+  "title": "Richie",
+  "description": "very good book",
+  "genres": [
+    "True Crime",
+    "Nonfiction",
+    "Biography",
+    "Crime",
+    "Audiobook",
+    "Drama"
+  ],
+  "author": "Thomas Thompson",
+  "average_rating": "4.06",
+  "url": "https://www.goodreads.com/book/show/411168.Richie"
+}

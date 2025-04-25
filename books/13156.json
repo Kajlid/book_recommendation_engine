@@ -1,0 +1,16 @@
+{
+  "title": "How to Design Programs: An Introduction to Programming and Computing",
+  "description": "This introduction to programming places computer science in the core of a liberal arts education. Unlike other introductory books, it focuses on the program design process. This approach fosters a variety of skills—critical reading, analytical thinking, creative synthesis, and attention to detail—that are important for everyone, not just future computer programmers. The book exposes readers to two fundamentally new ideas. First, it presents program design guidelines that show the reader how to analyze a problem statement; how to formulate concise goals; how to make up examples; how to develop an outline of the solution, based on the analysis; how to finish the program; and how to test. Each step produces a well-defined intermediate product. Second, the book comes with a novel programming environment, the first one explicitly designed for beginners. The environment grows with the readers as they master the material in the book until it supports a full-fledged language for the whole spectrum of programming tasks. All the book's support materials are available for free on the Web. The Web site includes the environment, teacher guides, exercises for all levels, solutions, and additional projects. A second edition is now available.",
+  "genres": [
+    "Programming",
+    "Computer Science",
+    "Technology",
+    "Computers",
+    "Technical",
+    "Nonfiction",
+    "Software"
+  ],
+  "author": "Matthias Felleisen",
+  "average_rating": "4.03",
+  "url": "https://www.goodreads.com/book/show/1119079.How_to_Design_Programs"
+}

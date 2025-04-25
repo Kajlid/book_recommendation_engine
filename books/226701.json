@@ -1,0 +1,16 @@
+{
+  "title": "Deep Learning with Python",
+  "description": "Deep learning is applicable to a widening range of artificial intelligence problems, such as image classification, speech recognition, text classification, question answering, text-to-speech, and optical character recognition. It is the technology behind photo tagging systems at Facebook and Google, self-driving cars, speech recognition systems on your smartphone, and much more.In particular, Deep learning excels at solving machine perception problems: understanding the content of image data, video data, or sound data. Here's a simple example: say you have a large collection of images, and that you want tags associated with each image, for example, \"dog,\" \"cat,\" etc. Deep learning can allow you to create a system that understands how to map such tags to images, learning only from examples. This system can then be applied to new images, automating the task of photo tagging. A deep learning model only has to be fed examples of a task to start generating useful results on new data.",
+  "genres": [
+    "Programming",
+    "Artificial Intelligence",
+    "Computer Science",
+    "Technology",
+    "Technical",
+    "Nonfiction",
+    "Science"
+  ],
+  "author": "François Chollet",
+  "average_rating": "4.57",
+  "url": "https://www.goodreads.com/book/show/33986067-deep-learning-with-python"
+}
