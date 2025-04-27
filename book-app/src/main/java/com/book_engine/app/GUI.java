@@ -27,6 +27,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -133,13 +134,44 @@ public class GUI extends JFrame {
         searchResultPane.setPreferredSize(new Dimension(400, 450));
         
         // Book content styling
-        bookContentPane.setPreferredSize(new Dimension(400, 200));
-        bookContentTextArea.setText("\n  The contents of the document will appear here.");
-        bookContentTextArea.setFont(new Font("Times New Roman",Font.BOLD, 14));
+        JPanel bookContentPanel = new JPanel(new BorderLayout());
+        bookContentPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 200, 245), 2),
+            new EmptyBorder(16, 18, 16, 18)
+        ));
+        bookContentPanel.setBackground(Color.WHITE);
+
+        bookContentTextArea.setFont(new Font("Roboto", Font.PLAIN, 15));
         bookContentTextArea.setLineWrap(true);
         bookContentTextArea.setWrapStyleWord(true);
-        bookContentTextArea.setEditable(false); // non-editable content of book 
-        bookContentTextArea.setBorder( new EmptyBorder(10,10,10,10) );
+        bookContentTextArea.setEditable(false);
+        bookContentTextArea.setOpaque(false);
+        bookContentTextArea.setBorder(null);
+        JScrollPane bookContentScroll = new JScrollPane(bookContentTextArea);
+        bookContentScroll.setBorder(null);
+        bookContentPanel.add(bookContentScroll, BorderLayout.CENTER);
+
+        // Split pane
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, searchResultPane, bookContentPanel);
+        splitPane.setDividerLocation(500); 
+        splitPane.setResizeWeight(0.7);
+        splitPane.setContinuousLayout(true);
+        splitPane.setOneTouchExpandable(true);
+
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                if (getWidth() > 1000) {
+                    splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+                    splitPane.setDividerLocation(0.6);
+                } else {
+                    splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+                    splitPane.setDividerLocation(0.7);
+                }
+            }
+        });
+        
+
+
 
         // Action for quitting
         quitItem.addActionListener(e -> System.exit(0));
@@ -157,13 +189,14 @@ public class GUI extends JFrame {
         topPanel.add(searchPanel);
 
         mainPanel.add(topPanel, BorderLayout.PAGE_START);
+        mainPanel.add(splitPane, BorderLayout.CENTER);
 
 
         searchResultPanel.setOpaque(true);
         searchResultPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        mainPanel.add(searchResultPane, BorderLayout.CENTER);
-        mainPanel.add(bookContentPane, BorderLayout.PAGE_END);
+        //mainPanel.add(searchResultPane, BorderLayout.CENTER);
+        //mainPanel.add(bookContentPane, BorderLayout.PAGE_END);
 
         mainPanel.setBackground(new java.awt.Color(255, 191, 254));
         setVisible(true); // Make it visible
@@ -236,6 +269,7 @@ public class GUI extends JFrame {
      */
     public void displayBookContent(Book book){
         bookContentTextArea.setText(book.displayContents());
+        bookContentTextArea.setCaretPosition(0);
     }
 
     /**
