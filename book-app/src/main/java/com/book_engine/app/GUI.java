@@ -88,8 +88,37 @@ public class GUI extends JFrame {
                             KeyStroke.getKeyStroke( "ENTER" ), 
                             JComponent.WHEN_FOCUSED );
                             
-        JButton searchButton = new JButton("search");
+        JButton searchButton = new JButton("Search");
         searchButton.addActionListener(e -> search());
+
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
+        searchPanel.setBackground(new Color(255, 226, 254));
+        searchPanel.setBorder(new EmptyBorder(10, 0, 10, 0)); // top and bottom padding
+
+        searchInput.setFont(new Font("Roboto", Font.PLAIN, 18));
+        searchInput.setMaximumSize(new Dimension(600, 40));
+        searchInput.setPreferredSize(new Dimension(400, 40));
+        searchInput.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 200, 245), 2),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        searchInput.setBackground(Color.WHITE);
+
+        searchButton.setFont(new Font("Roboto", Font.BOLD, 18));
+        searchButton.setBackground(new Color(140, 90, 160));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setFocusPainted(false);
+        searchButton.setBorder(BorderFactory.createEmptyBorder(10, 24, 10, 24));
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchButton.addActionListener(e -> search());
+
+        searchPanel.add(Box.createHorizontalStrut(10));
+        searchPanel.add(searchInput);
+        searchPanel.add(Box.createHorizontalStrut(12));
+        searchPanel.add(searchButton);
+        searchPanel.add(Box.createHorizontalStrut(10));
+
 
         // Set up menu
         menuBar.add(searchMenu);
@@ -117,14 +146,17 @@ public class GUI extends JFrame {
 
         // Page title
         JLabel welcomeLabel = new JLabel("Welcome to the book recommendation engine");
-        welcomeLabel.setFont(new Font("Times New Roman", Font.BOLD, 16));
         
-        JPanel p1 = new JPanel(new BorderLayout(120, 50)); // First JPanel 
-        p1.add(welcomeLabel, BorderLayout.PAGE_START);
-        p1.add(searchInput, BorderLayout.LINE_START);
-        p1.add(searchButton, BorderLayout.CENTER);
-        p1.setBackground(new java.awt.Color(255, 226, 254));
-        mainPanel.add(p1, BorderLayout.PAGE_START);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBackground(new Color(255, 226, 254));
+        topPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 20));
+        welcomeLabel.setBorder(new EmptyBorder(8, 0, 8, 0));
+        topPanel.add(welcomeLabel);
+        topPanel.add(searchPanel);
+
+        mainPanel.add(topPanel, BorderLayout.PAGE_START);
 
 
         searchResultPanel.setOpaque(true);
@@ -219,10 +251,7 @@ public class GUI extends JFrame {
         return sb.toString();
     }
     
-
-    /**
-     * Inner class that represents a panel for displaying book results
-     */
+    
     private class BookResultPanel extends JPanel {
         private static final int COVER_WIDTH = 100;
         private static final int COVER_HEIGHT = 150;
