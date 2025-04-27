@@ -2,22 +2,26 @@ package com.book_engine.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,9 +30,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.border.EmptyBorder;
+
 
 
 /**
@@ -159,20 +163,17 @@ public class GUI extends JFrame {
      * First the results are retrieved from the BookRecommender
      * then the searchResultPanel is updated with the new results
      */
-    private void search(){
+    private void search() {
         String query = searchInput.getText();
         ArrayList<Book> books;
         try {
             books = bookRec.search(query);
-            searchResultPanel.remove(searchResultPane);
-            searchResultPane = displayBookResults(books);
-            searchResultPanel.add(searchResultPane);
+            displayBookResults(books); 
             searchResultPanel.revalidate();
             searchResultPanel.repaint();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
     }
 
 
@@ -181,35 +182,21 @@ public class GUI extends JFrame {
      * @param books The list of books to be displayed
      * @return JScrollPane containing the list of books
      */
-    public JScrollPane displayBookResults(ArrayList<Book> books) {
-        // List model to hold the book titles and authors
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (int i = 0; i < books.size(); i++) {
-            listModel.addElement(i + " " + books.get(i).title + " - " + books.get(i).author);
+    public void displayBookResults(ArrayList<Book> books) {
+        searchResultPanel.removeAll(); // clear old results
+    
+        for (Book book : books) {
+            BookResultPanel panel = new BookResultPanel(book);
+            panel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    displayBookContent(book);
+                }
+            });
+            searchResultPanel.add(panel);
+            searchResultPanel.add(Box.createVerticalStrut(8));
         }
-
-        // Create a JList to display the book titles and authors
-        JList<String> resultList = new JList<>(listModel);
-        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        resultList.setLayoutOrientation(JList.VERTICAL);
-        resultList.setVisibleRowCount(-1); 
-        resultList.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        resultList.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-       
-        // Add a listener to the list to handle book selection events
-        resultList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                String selected = resultList.getSelectedValue();
-                Integer booknr = Integer.parseInt(selected.split(" ")[0]);
-                
-                // Display the content of the selected book in the text area
-                displayBookContent(books.get(booknr));
-            }
-        });
-
-        JScrollPane newsearchResultPane = new JScrollPane(resultList);
-        return newsearchResultPane;
     }
+    
 
     /**
      * Display the content of a book in the text area
@@ -217,5 +204,159 @@ public class GUI extends JFrame {
      */
     public void displayBookContent(Book book){
         bookContentTextArea.setText(book.displayContents());
+    }
+
+    /**
+     * Converts a rating to a string of stars
+     * @param rating The rating to be converted
+     * @return A string of stars representing the rating
+     */
+    public static String getStarString(double rating) {
+        int stars = (int) Math.round(rating); // round to nearest whole star
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < stars; i++) sb.append("★");
+        for (int i = stars; i < 5; i++) sb.append("☆");
+        return sb.toString();
+    }
+    
+
+    /**
+     * Inner class that represents a panel for displaying book results
+     */
+    private class BookResultPanel extends JPanel {
+        private static final int COVER_WIDTH = 100;
+        private static final int COVER_HEIGHT = 150;
+    
+        public BookResultPanel(Book book) {
+            setLayout(new BorderLayout(14, 0));
+            setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+            setBackground(Color.WHITE);
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+    
+            // Add Roboto font
+            Font robotoTitle = new Font("Roboto", Font.BOLD, 10);
+            Font robotoAuthor = new Font("Roboto", Font.PLAIN, 8);
+            Font robotoBig = new Font("Roboto", Font.BOLD, 20);
+            Font robotoNormal = new Font("Roboto", Font.PLAIN, 14);
+            Font robotoItalic = new Font("Roboto", Font.ITALIC, 12);
+    
+            // Book cover
+            JPanel coverPanel = new JPanel() {
+                /**
+                 * Paints a book cover with a random background color, title, and author.
+                 *
+                 * @param g the Graphics context used for drawing
+                 */
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    // Select a random color for the cover
+                    Random rand = new Random(book.title.hashCode());
+                    g.setColor(new Color(
+                        rand.nextInt(128) + 64, 
+                        rand.nextInt(128) + 64, 
+                        rand.nextInt(128) + 64
+                    ));
+                    setBackground(Color.WHITE);
+                    g.fillRect(0, 0, COVER_WIDTH, COVER_HEIGHT);
+    
+                    // Add title to cover
+                    g.setColor(Color.WHITE);
+                    g.setFont(robotoTitle);
+                    writeMultilineString(g, book.title, 8, 18, COVER_WIDTH-16, robotoTitle, 3); // up to 3 lines
+                    
+                    // Add author to cover
+                    g.setFont(robotoAuthor);
+                    writeMultilineString(g, book.author, 8, COVER_HEIGHT - 18, COVER_WIDTH-16, robotoAuthor, 1);
+                }
+
+                /**
+                 * Helper function to draw a multi-line string within a given max width and line count.
+                 * Appends "..." if needed.
+                 *
+                 * @param g         the Graphics context
+                 * @param text      the text to render
+                 * @param x         x-coordinate for drawing
+                 * @param y         y-coordinate of the first line
+                 * @param maxWidth  maximum width in pixels for each line
+                 * @param font      font to use for rendering
+                 * @param maxLines  maximum number of lines to render
+                 */
+                private void writeMultilineString(Graphics g, String text, int x, int y, int maxWidth, Font font, int maxLines) {
+                    FontMetrics fm = g.getFontMetrics(font);
+                    String[] words = text.split(" ");
+                    StringBuilder line = new StringBuilder();
+                    int offsetY = 0;
+                    int lines = 0;
+
+                    // Go through each word and check if it fits in the line
+                    for (String word : words) {
+                        String testLine = line.length() == 0 ? word : line + " " + word;
+                        // Check if line exceeds max width
+                        if (fm.stringWidth(testLine) > maxWidth) {
+                            // Draw the current line
+                            g.drawString(line.toString(), x, y + offsetY);
+                            offsetY += fm.getHeight();
+                            lines++;
+                            // Add "..." if the line count exceeds maxLines
+                            if (lines >= maxLines) {
+                                g.drawString("...", x, y + offsetY);
+                                return;
+                            }
+                            line = new StringBuilder(word);
+                        } else {
+                            // Add the word to the current line
+                            if (line.length() > 0) line.append(" ");
+                            line.append(word);
+                        }
+                    }
+                    // Draw the last line
+                    if (line.length() > 0 && lines < maxLines) {
+                        g.drawString(line.toString(), x, y + offsetY);
+                    }
+                        
+                }
+                
+            };
+            coverPanel.setPreferredSize(new Dimension(COVER_WIDTH, COVER_HEIGHT));
+            //coverPanel.setMinimumSize(coverPanel.getPreferredSize());
+            //coverPanel.setMaximumSize(coverPanel.getPreferredSize());
+    
+            // Info Panel with title, author and rating
+            JPanel infoPanel = new JPanel();
+            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+            infoPanel.setOpaque(false);
+    
+            // Book title
+            JLabel titleLabel = new JLabel("<html><body style='width:320px'>" + book.title + "</body></html>");
+            titleLabel.setFont(robotoBig);
+            titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            // Book author
+            JLabel authorLabel = new JLabel("by " + book.author);
+            authorLabel.setFont(robotoItalic);
+            authorLabel.setForeground(Color.GRAY);
+            authorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    
+            // Book rating as stars
+            String stars = getStarString(book.rating);
+            JLabel starsLabel = new JLabel(stars);
+            starsLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 22));
+            starsLabel.setForeground(new Color(0xFFD700)); // Gold color for stars
+            starsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            
+            // Add components to the info panel
+            infoPanel.add(Box.createVerticalStrut(8));
+            infoPanel.add(titleLabel);
+            infoPanel.add(authorLabel);
+            infoPanel.add(starsLabel);
+            infoPanel.add(Box.createVerticalStrut(8));
+    
+            add(coverPanel, BorderLayout.WEST);
+            add(infoPanel, BorderLayout.CENTER);
+    
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
     }
 }
