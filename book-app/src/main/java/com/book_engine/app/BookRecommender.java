@@ -26,9 +26,10 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 public class BookRecommender {
     // Title contributes more to the search results
-    private static double titleWeight = 0.5;      // title weight
-    private static double genreWeight = 0.3;         // genre weight
+    private static double titleWeight = 0.4;      // title weight
+    private static double genreWeight = 0.25;         // genre weight
     private static double descriptionWeight = 0.2;        // description weight
+    private static double authorWeight = 0.15;
 
     /**
      * Boost some random books with this weight
@@ -91,6 +92,7 @@ public class BookRecommender {
         double title_score = 0;
         double genre_score = 0;
         double description_score = 0;
+        double author_score = 0; 
         double preference_bonus = 0;   // user preference bonus
 
         double rating_boost = 0;
@@ -105,6 +107,7 @@ public class BookRecommender {
         
         String normalizedQuery = query.toLowerCase().trim();
         String normalizedTitle = b.title.toLowerCase().trim();
+        String normalizedAuthor = b.author.toLowerCase().trim();
             
         List<String> words = Arrays.asList(normalizedQuery.split("\\s+"));
         List<String> titleToList = Arrays.asList(normalizedTitle.split("\\s+"));
@@ -128,6 +131,15 @@ public class BookRecommender {
                 genre_score += 1;
             }
 
+            if (normalizedAuthor.contains(word)) {
+                author_score += 1;
+            }
+            
+            // If exact author match, boost score
+            if (normalizedAuthor.equals(normalizedQuery)) {
+                author_score += 5;
+            }
+
             description_score += getTFIDFScore(database.indexName, b.id, word);
         }
 
@@ -142,7 +154,7 @@ public class BookRecommender {
                     // Small bonus for title containing similar words as liked book
                     for (String titleWord : readTitle.split("\\s+")) {
                         if (normalizedTitle.contains(titleWord)) {
-                            preference_bonus += 0.1;  
+                            preference_bonus += 0.05;  
                         }
                     }
 
@@ -180,7 +192,11 @@ public class BookRecommender {
             }
         }
 
-        double baseScore = titleWeight * title_score + genreWeight * genre_score + descriptionWeight * description_score;
+        double baseScore = titleWeight * title_score 
+                           + genreWeight * genre_score 
+                           + descriptionWeight * description_score 
+                           + authorWeight * author_score;
+
         double total_score = (baseScore + preference_bonus) * (1 + rating_boost);
 
         b.score = total_score;
