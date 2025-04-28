@@ -226,8 +226,11 @@ public class BookRecommender {
         
         // Access term stats (TF, DF) for the specified term
         Term stats = tv.terms().get(term);
-        int tf = stats.termFreq();  
-        double tfScaled = 1 + Math.log(tf);     // sublinear TF scaling to reduce bias of long descriptions
+        int tf = stats.termFreq();
+        double tfScaled = 0;
+        if (tf > 0) {
+            tfScaled = 1 + Math.log(tf);     // sublinear TF scaling to reduce bias of long descriptions
+        }
         int df = stats.docFreq();   
     
         double idf = Math.log((double) (totalDocs + 1) / (df + 1)) + 1;
