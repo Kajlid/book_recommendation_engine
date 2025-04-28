@@ -95,7 +95,12 @@ public class BookRecommender {
 
         double rating_boost = 0;
         if (b.average_rating != null) {
-            rating_boost = (Double.parseDouble(b.average_rating)- 3.0);     // scaling factor for rating
+            try {
+                rating_boost = (Double.parseDouble(b.average_rating)- 3.0);     // scaling factor for rating
+            }
+            catch (Exception e) {
+                rating_boost = 0;
+            }
         }
         
         String normalizedQuery = query.toLowerCase().trim();
@@ -126,7 +131,7 @@ public class BookRecommender {
             description_score += getTFIDFScore(database.indexName, b.id, word);
         }
 
-        // ---- User influence bonus ----
+        // User influence bonus (based on personal preferences)
         for (Map.Entry<String, Float> entry : user.books.entrySet()) {
             if (entry.getValue() >= 4.0) {   // Only consider books user rated relatively high
                 Book readBook = database.getBookByID(entry.getKey());   
@@ -141,7 +146,6 @@ public class BookRecommender {
                         }
                     }
 
-                    
                     // Small bonus for books with similar genres as user's read and liked books with that genre
                     for (String genre : b.genres) {
                         if (readGenres.contains(genre.toLowerCase().trim())) {
@@ -153,16 +157,37 @@ public class BookRecommender {
             }
         }
 
+        // Collaborative filtering preference bonus (find similar users and their read books)
+        List<User> similarUsers = findSimilarUsers(user, Arrays.asList(user2, user3, user4), 3);
+        for (User similarUser : similarUsers) {
+            for (Map.Entry<String, Float> entry : similarUser.books.entrySet()) {
+                if (entry.getValue() >= 4.0) {
+                    Book likedBook = database.getBookByID(entry.getKey());
+                    if (likedBook != null) {
+                        String likedTitle = likedBook.title.toLowerCase();
+                        for (String titleWord : likedTitle.split("\\s+")) {
+                            if (normalizedTitle.contains(titleWord)) {
+                                preference_bonus += 0.05;
+                            }
+                        }
+                        for (String genre : b.genres) {
+                            if (likedBook.genres.contains(genre.toLowerCase().trim())) {
+                                preference_bonus += 0.1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         double baseScore = titleWeight * title_score + genreWeight * genre_score + descriptionWeight * description_score;
         double total_score = (baseScore + preference_bonus) * (1 + rating_boost);
 
         b.score = total_score;
     }
 
-    private double getTFIDFScore(String indexName, String docId, String term) throws IOException {
-        /** 
-         * Get term vectors from Elasticsearch for the specified document and field
-         * */ 
+    private double getTFIDFScore(String indexName, String docId, String term) throws IOException { 
+        //Get term vectors from Elasticsearch for the specified document and field
         TermvectorsResponse response = client.termvectors(tv -> tv
             .index(indexName)
             .id(docId)
@@ -173,30 +198,25 @@ public class BookRecommender {
             .payloads(false)      
         );
     
-        /** 
-         * Get total document count in the index
-         * */ 
+        // Get total document count in the index
         co.elastic.clients.elasticsearch.core.CountResponse countResponse = client.count(c -> c.index(indexName));
         long totalDocs = countResponse.count();
     
-        /** 
-         * Access term vector for the "description" field
-         * */ 
+        // Access term vector for the "description" field
         co.elastic.clients.elasticsearch.core.termvectors.TermVector tv = response.termVectors().get("description");
         if (tv == null || tv.terms() == null || !tv.terms().containsKey(term)) {
             return 0.0;  // Term not found in the document or term vectors missing
         }
         
-        /** 
-         * Access term stats (TF, DF) for the specified term
-         * */ 
+        // Access term stats (TF, DF) for the specified term
         Term stats = tv.terms().get(term);
         int tf = stats.termFreq();  
+        double tfScaled = 1 + Math.log(tf);     // sublinear TF scaling to reduce bias of long descriptions
         int df = stats.docFreq();   
     
         double idf = Math.log((double) (totalDocs + 1) / (df + 1)) + 1;
     
-        return tf * idf;
+        return tfScaled * idf;
     }
 
     public double computeCosineSimilarity(User u1, User u2) {
@@ -250,7 +270,7 @@ public class BookRecommender {
             // Return only n most similar users
             return similarUsers.subList(0, topN);
         }
-        
+
         return similarUsers;
     }
     
