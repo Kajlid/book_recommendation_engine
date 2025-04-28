@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.File;
+
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -32,6 +35,7 @@ public class Database {
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);
     public HashMap<String, String> title2id = new HashMap<>();
+    public ArrayList<User> users = new ArrayList<>();
 
     // Constructor
     public Database() throws ElasticsearchException, IOException {
@@ -42,6 +46,9 @@ public class Database {
         } else {
             System.out.println("Using existing index");
         }
+        if (users.size() == 0){
+            addUserData();
+        } 
     }
 
     // Generate a unique ID based on the book title and author
@@ -92,7 +99,7 @@ public class Database {
             }
 
             book.id = generateId(book);
-            title2id.put(generateId(book), book.id);
+            title2id.put(generateId(book), book.id); // TODO: remove title2id
 
             client.index(IndexRequest.of(i -> i
                 .index(indexName)
@@ -195,6 +202,37 @@ public class Database {
             e.printStackTrace();
         }
         return bookList;
+    }
+ /**
+  * Function that reads all user files 
+  * Creates new user object, with corresponding read books and ratings, 
+  * and adds them all to the arraylist users
+  */
+    public void addUserData(){
+        
+        for (int i=0; ; i++){ //infinite loop that breaks when no more file is found
+            String filename = String.format("../users/user%d.txt", i);
+            File file = new File(filename);
+            if (!file.exists()){
+                break;
+            }
+            try(BufferedReader br = new BufferedReader(new FileReader(file))){
+                String username = br.readLine();
+                User newUser = new User(username);
+                String line;
+                while ((line = br.readLine()) != null && !line.trim().isEmpty()) {
+                    String[] book = line.split(" ");
+                    String bookid = book[0];
+                    Float rating = Float.parseFloat(book[1]);
+                    newUser.addBookById(bookid, this, rating);
+                }
+                users.add(newUser);
+                System.out.println("Added user with name: " + username);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            
+        }
     }
     
 
