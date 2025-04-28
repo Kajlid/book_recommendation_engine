@@ -196,27 +196,6 @@ public class Database {
         }
         return bookList;
     }
-
-    public ArrayList<Book> getRandomBooks(int count, double minRating) {
-        // Make a random selection of {count} books with minimal rating minRating
-        ArrayList<Book> allBooks = getData();
-        ArrayList<Book> popularBooks = new ArrayList<>();
-
-        for (Book book : allBooks) {
-            if (book.rating >= minRating) {
-                popularBooks.add(book);
-            }
-        }
-
-        Collections.shuffle(popularBooks);
-
-        ArrayList<Book> selection = new ArrayList<>();
-        for (int i = 0; i < count && i < popularBooks.size(); i++) {
-            selection.add(popularBooks.get(i));
-        }
-
-        return selection;
-    }
     
 
     
