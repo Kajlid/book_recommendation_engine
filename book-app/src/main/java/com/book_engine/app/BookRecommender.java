@@ -222,6 +222,37 @@ public class BookRecommender {
         if (normU1 == 0 || normU2 == 0) return 0;
         return dot / (Math.sqrt(normU1) * Math.sqrt(normU2));
     }
+
+    public List<User> findSimilarUsers(User targetUser, List<User> allUsers, int topN) {
+        List<User> similarUsers = new ArrayList<>();
+        List<Double> similarities = new ArrayList<>();
+    
+        for (User other : allUsers) {
+            if (other.username.equals(targetUser.username)) continue;  // skip self
+            double sim = computeCosineSimilarity(targetUser, other);
+            if (sim > 0.1) {  // threshold
+                similarUsers.add(other);
+                similarities.add(sim);
+            }
+        }
+    
+        // Sort users by similarity descending
+        for (int i = 0; i < similarUsers.size() - 1; i++) {
+            for (int j = i + 1; j < similarUsers.size(); j++) {
+                if (similarities.get(j) > similarities.get(i)) {
+                    Collections.swap(similarUsers, i, j);
+                    Collections.swap(similarities, i, j);
+                }
+            }
+        }
+    
+        if (similarUsers.size() > topN) {
+            // Return only n most similar users
+            return similarUsers.subList(0, topN);
+        }
+        
+        return similarUsers;
+    }
     
     
     public ArrayList<Book> search(String query) throws IOException {
