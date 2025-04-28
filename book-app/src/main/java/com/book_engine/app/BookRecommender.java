@@ -98,7 +98,7 @@ public class BookRecommender {
         double rating_boost = 0;
         if (b.average_rating != null) {
             try {
-                rating_boost = (Double.parseDouble(b.average_rating)- 3.0);     // scaling factor for rating
+                rating_boost = Math.abs(Double.parseDouble(b.average_rating)- 1.0);     // highly rated books should get a higher score
             }
             catch (Exception e) {
                 rating_boost = 0;
@@ -197,7 +197,7 @@ public class BookRecommender {
                            + descriptionWeight * description_score 
                            + authorWeight * author_score;
 
-        double total_score = (baseScore + preference_bonus) * (1 + rating_boost);
+        double total_score = (baseScore + preference_bonus) * rating_boost;
 
         b.score = total_score;
     }
