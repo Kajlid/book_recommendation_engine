@@ -40,9 +40,30 @@ public class BookRecommender {
     // TODO: add more users
     static User user;
     static {
-        user = new User("temp_user");
-        user.books.put("twelfth_night_william_shakespeare", 4.5f);
-        user.books.put("how_to_teach_a_slug_to_read_susan_pearson", 3.2f);
+        user = new User("harry_fan");
+        user.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
+        user.books.put("Last Mission_Jack_Everett", 3.2f);
+    }
+
+    static User user2;
+    static {
+        user2 = new User("anna932");
+        user2.books.put("twelfth_night_william_shakespeare", 4.5f);
+        user2.books.put("how_to_teach_a_slug_to_read_susan_pearson", 3.2f);
+    }
+
+    static User user3;
+    static {
+        user3 = new User("bla");
+        user3.books.put("twelfth_night_william_shakespeare", 4.5f);
+        user3.books.put("The_Ant-Man_of_Malfen_Derek_Prior", 3.2f);
+    }
+
+    static User user4;
+    static {
+        user4 = new User("yer_a_wizard");
+        user4.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
+        user4.books.put("Father_Unknown_Lesley_Pearse", 3.2f);
     }
     
 
@@ -71,6 +92,11 @@ public class BookRecommender {
         double genre_score = 0;
         double description_score = 0;
         double preference_bonus = 0;   // user preference bonus
+
+        double rating_boost = 0;
+        if (b.average_rating != null) {
+            rating_boost = (Double.parseDouble(b.average_rating)- 3.0);     // scaling factor for rating
+        }
         
         String normalizedQuery = query.toLowerCase().trim();
         String normalizedTitle = b.title.toLowerCase().trim();
@@ -127,8 +153,8 @@ public class BookRecommender {
             }
         }
 
-
-        double total_score = titleWeight * title_score + genreWeight * genre_score + descriptionWeight * description_score + preference_bonus;
+        double baseScore = titleWeight * title_score + genreWeight * genre_score + descriptionWeight * description_score;
+        double total_score = (baseScore + preference_bonus) * (1 + rating_boost);
 
         b.score = total_score;
     }
@@ -172,6 +198,31 @@ public class BookRecommender {
     
         return tf * idf;
     }
+
+    public double computeCosineSimilarity(User u1, User u2) {
+        double dot = 0;
+        double normU1 = 0;
+        double normU2 = 0;
+    
+        for (Map.Entry<String, Float> entry : u1.books.entrySet()) {
+            String bookId = entry.getKey();
+            Float rating1 = entry.getValue();
+    
+            if (u2.books.containsKey(bookId)) {
+                Float rating2 = u2.books.get(bookId);
+                dot += rating1 * rating2;
+            }
+            normU1 += rating1 * rating1;
+        }
+    
+        for (Float rating2 : u2.books.values()) {
+            normU2 += rating2 * rating2;
+        }
+    
+        if (normU1 == 0 || normU2 == 0) return 0;
+        return dot / (Math.sqrt(normU1) * Math.sqrt(normU2));
+    }
+    
     
     public ArrayList<Book> search(String query) throws IOException {
         ArrayList<Book> retrievedBooks = database.getDataForQuery(query);
