@@ -196,16 +196,6 @@ public class BookRecommender {
         int numRandomBooks = 3;
         double minRating = 4.0;
 
-        ArrayList<Book> randomBooks = database.getRandomBooks(numRandomBooks, minRating);
-        randomBooks.sort((b1, b2) -> Double.compare(b2.rating, b1.rating));    // Sort the random books by rating
-        for (Book rb : randomBooks) {
-            boolean alreadyIncluded = relevantBooks.stream().anyMatch(b -> b.id.equals(rb.id));
-            if (!alreadyIncluded) {
-                rb.score = random.nextDouble() * randomBoost; 
-                relevantBooks.add(rb);
-            }
-        }
-
         /** 
          * Sort books by score in descending order
          * */  
