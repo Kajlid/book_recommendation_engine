@@ -17,6 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JComboBox;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -114,12 +115,30 @@ public class GUI extends JFrame {
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.addActionListener(e -> search());
 
+        String[] users = { "User 1", "User 2", "User 3", "User 4",
+                         "User 5", "User 6" };
+
+
+        final JComboBox<String> cb = new JComboBox<String>(users);
+
+        cb.setMaximumSize(cb.getPreferredSize());
+        cb.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        cb.addActionListener(e -> {
+            String selectedUser = (String) cb.getSelectedItem();
+            if (selectedUser != null) {
+                System.out.println("Selected User: " + selectedUser);
+
+            }
+        });
+
         searchPanel.add(Box.createHorizontalStrut(10));
         searchPanel.add(searchInput);
         searchPanel.add(Box.createHorizontalStrut(12));
         searchPanel.add(searchButton);
+        searchPanel.add(Box.createHorizontalStrut(12));
+        searchPanel.add(cb)
         searchPanel.add(Box.createHorizontalStrut(10));
-
 
         // Set up menu
         menuBar.add(searchMenu);
