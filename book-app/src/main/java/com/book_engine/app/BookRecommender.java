@@ -311,7 +311,7 @@ public class BookRecommender {
                 if (readBook != null) {
                     String readTitle = readBook.title.toLowerCase();
                     ArrayList readGenres = readBook.genres;
-                    String readAuthor = readBook.author;
+                    String readAuthor = readBook.author.toLowerCase();
 
                     // Make a big initial query string with all titles, genres and authors of user's read and liked books
                     query += readTitle + readGenres + readAuthor;
