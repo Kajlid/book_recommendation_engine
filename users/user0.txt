@@ -1,0 +1,10 @@
+classicsfan99
+pride_and_prejudice_jane_austen 5
+moby_dick_herman_melville 5
+war_and_peace_leo_tolstoy 4
+great_expectations_charles_dickens 3
+the_picture_of_dorian_gray_oscar_wilde 5
+crime_and_punishment_fyodor_dostoevsky 3
+the_brothers_karamazov_fyodor_dostoevsky 4
+anna_karenina_leo_tolstoy 4
+the_odyssey_homer 2
