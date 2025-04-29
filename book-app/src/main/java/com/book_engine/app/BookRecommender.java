@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -297,6 +298,35 @@ public class BookRecommender {
 
         return similarUsers;
     }
+
+    public ArrayList<Book> initialRecommendations(User user) throws IOException {
+        HashMap<String, Float> read_books = user.books;
+        ArrayList<Book> recommendedBooks = new ArrayList<>();
+        String query = "";
+
+        for (Map.Entry<String, Float> entry : read_books.entrySet()) {
+            // Only if the user rated the book high does it contribute to recommendations
+            if (entry.getValue() >= 4.0) {
+                Book readBook = database.getBookByID(entry.getKey());   
+                if (readBook != null) {
+                    String readTitle = readBook.title.toLowerCase();
+                    ArrayList readGenres = readBook.genres;
+                    String readAuthor = readBook.author;
+
+                    // Make a big initial query string with all titles, genres and authors of user's read and liked books
+                    query += readTitle + readGenres + readAuthor;
+
+                }
+
+            }
+                
+        }
+
+        recommendedBooks = database.getDataForQuery(query);
+
+        return recommendedBooks;
+
+    }
     
     
     public ArrayList<Book> search(String query) throws IOException {
@@ -315,12 +345,6 @@ public class BookRecommender {
         for (Book b : relevantBooks) {
             setScore(b, query);
         }
-
-        /** 
-         * Add some random books for diversification of recommendations
-         * */  
-        int numRandomBooks = 3;
-        double minRating = 4.0;
 
         /** 
          * Sort books by score in descending order
