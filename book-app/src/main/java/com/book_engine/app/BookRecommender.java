@@ -239,6 +239,11 @@ public class BookRecommender {
     }
 
     public double computeCosineSimilarity(User u1, User u2) {
+        /*
+         * Compute and return the cosine similarity between two users based on which books they have read and how they rated them. 
+         * If users have no read books in common, the cosine similarity will be 0.
+         * If the users have rated many book similarly, the cosine similarity score will be high.
+         */
         double dot = 0;
         double normU1 = 0;
         double normU2 = 0;
@@ -251,15 +256,15 @@ public class BookRecommender {
                 Float rating2 = u2.books.get(bookId);
                 dot += rating1 * rating2;
             }
-            normU1 += rating1 * rating1;
+            normU1 += Math.sqrt(rating1 * rating1);
         }
     
         for (Float rating2 : u2.books.values()) {
-            normU2 += rating2 * rating2;
+            normU2 += Math.sqrt(rating2 * rating2);
         }
     
         if (normU1 == 0 || normU2 == 0) return 0;
-        return dot / (Math.sqrt(normU1) * Math.sqrt(normU2));
+        return dot / (normU1 * normU2);
     }
 
     public List<User> findSimilarUsers(User targetUser, List<User> allUsers, int topN) {
@@ -269,7 +274,7 @@ public class BookRecommender {
         for (User other : allUsers) {
             if (other.username.equals(targetUser.username)) continue;  // skip self
             double sim = computeCosineSimilarity(targetUser, other);
-            if (sim > 0.1) {  // threshold
+            if (sim > 0.5) {  // threshold for similarity (adding users to neighborhood)
                 similarUsers.add(other);
                 similarities.add(sim);
             }
