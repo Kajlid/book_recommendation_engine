@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.File;
+
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -31,7 +34,8 @@ public class Database {
     private static RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static ElasticsearchClient client = new ElasticsearchClient(transport);
-    public HashMap<String, String> title2id = new HashMap<>();
+    public HashMap<String, Boolean> titleExists= new HashMap<String, Boolean>();
+    public ArrayList<User> users = new ArrayList<>();
 
     // Constructor
     public Database() throws ElasticsearchException, IOException {
@@ -42,6 +46,8 @@ public class Database {
         } else {
             System.out.println("Using existing index");
         }
+        
+        addUserData();
     }
 
     // Generate a unique ID based on the book title and author
@@ -69,7 +75,7 @@ public class Database {
                 Book book = gson.fromJson(reader, Book.class);
 
                 // Skip if title is not found or already exists in title2id
-                if (book.title.equals("Title not found") || title2id.get(book.title) != null) {
+                if (book.title.equals("Title not found") || titleExists.get(book.title) != null) {
                     continue;
                 }
 
@@ -92,7 +98,7 @@ public class Database {
             }
 
             book.id = generateId(book);
-            title2id.put(generateId(book), book.id);
+            titleExists.put(book.id, true);
 
             client.index(IndexRequest.of(i -> i
                 .index(indexName)
@@ -195,6 +201,38 @@ public class Database {
             e.printStackTrace();
         }
         return bookList;
+    }
+    
+    /**
+     * Function that reads all user files 
+     * Creates new user object, with corresponding read books and ratings, 
+     * and adds them all to the arraylist users
+     * Note: indexing must be done before calling this function
+     */
+    public void addUserData(){
+        
+        for (int i=0; ; i++){ //infinite loop that breaks when no more file is found
+            String filename = String.format("../users/user%d.txt", i);
+            File file = new File(filename);
+            if (!file.exists()){
+                break;
+            }
+            try(BufferedReader br = new BufferedReader(new FileReader(file))){
+                String username = br.readLine();
+                User newUser = new User(username);
+                String line;
+                while ((line = br.readLine()) != null && !line.trim().isEmpty()) {
+                    String[] book = line.split(" ");
+                    String bookid = book[0];
+                    Float rating = Float.parseFloat(book[1]);
+                    newUser.addBookById(bookid, this, rating);
+                }
+                users.add(newUser);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            
+        }
     }
     
 
