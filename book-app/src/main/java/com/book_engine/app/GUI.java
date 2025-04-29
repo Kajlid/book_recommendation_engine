@@ -137,7 +137,7 @@ public class GUI extends JFrame {
         searchPanel.add(Box.createHorizontalStrut(12));
         searchPanel.add(searchButton);
         searchPanel.add(Box.createHorizontalStrut(12));
-        searchPanel.add(cb)
+        searchPanel.add(cb);
         searchPanel.add(Box.createHorizontalStrut(10));
 
         // Set up menu
