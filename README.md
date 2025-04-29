@@ -1,7 +1,11 @@
-# book_recommendation_engine
+# Book Recommendation Engine
 
-This is a book-recommendation-engine that 
+This is a book-recommendation-engine that gives personalized book recommendations given previously read books. This engine is built upon data scraped from Goodreads.
 
+## Prerequisites
+To execute this search engine you will need to download Docker, Maven and Elasticssearch. 
+
+## Running the program
 Start docker with: 
 
 ```sh
@@ -9,7 +13,13 @@ docker run -d --name elasticsearch   -p 9200:9200 -p 9300:9300   -e discovery.ty
 
 ```
 
-Compile and run with:
+Compile and run the program with:
 ```sh
 mvn clean package && java -jar target/book-app-1.0-SNAPSHOT.jar
 ```
+
+## Index
+Note that indexing will be run the first time you run the program and that this may take a while, 10-30 minutes depending on your machine. The program will then reuse your index the next time you run the program. To view all previously created indices visit http://localhost:9200/_cat/indices?v . To delete old indices use
+```sh
+ curl -X DELETE http://localhost:9200/indexname 
+ ```
