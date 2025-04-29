@@ -50,6 +50,11 @@ docker run -d --name elasticsearch   -p 9200:9200 -p 9300:9300   -e discovery.ty
 
 ```
 
+In order to run the program you need to be inside the directory book-app:
+```sh
+cd book-app
+```
+
 Compile and run the program with:
 ```sh
 mvn clean package && java -jar target/book-app-1.0-SNAPSHOT.jar
