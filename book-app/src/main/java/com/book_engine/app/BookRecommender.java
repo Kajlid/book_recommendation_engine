@@ -151,12 +151,18 @@ public class BookRecommender {
                 if (readBook != null) {
                     String readTitle = readBook.title.toLowerCase();
                     ArrayList readGenres = readBook.genres;
+                    String readAuthor = readBook.author.toLowerCase();
  
                     // Small bonus for title containing similar words as liked book
                     for (String titleWord : readTitle.split("\\s+")) {
                         if (normalizedTitle.contains(titleWord)) {
                             preference_bonus += 0.05;  
                         }
+                    }
+
+                    // Small bonus for books with the same author as the read and liked book
+                    if (normalizedAuthor.equals(readAuthor)) {
+                        preference_bonus += 0.1;
                     }
 
                     // Small bonus for books with similar genres as user's read and liked books with that genre
@@ -177,16 +183,16 @@ public class BookRecommender {
                 if (entry.getValue() >= 4.0) {
                     Book likedBook = database.getBookByID(entry.getKey());
                     if (likedBook != null) {
-                        String likedTitle = likedBook.title.toLowerCase();
-                        for (String titleWord : likedTitle.split("\\s+")) {
-                            if (normalizedTitle.contains(titleWord)) {
-                                preference_bonus += 0.05;
-                            }
-                        }
+
+                        // If a similar user has read and liked books of specific genres or authors, boost books of those genres and authors
                         for (String genre : b.genres) {
                             if (likedBook.genres.contains(genre.toLowerCase().trim())) {
                                 preference_bonus += 0.1;
                             }
+                        }
+
+                        if (likedBook.author.equals(normalizedAuthor)) {
+                            preference_bonus += 0.1;
                         }
                     }
                 }
