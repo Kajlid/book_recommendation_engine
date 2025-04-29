@@ -287,8 +287,8 @@ public class GUI extends JFrame {
     
     
     private class BookResultPanel extends JPanel {
-        private static final int COVER_WIDTH = 100;
-        private static final int COVER_HEIGHT = 150;
+        private static final int COVER_WIDTH = 50;
+        private static final int COVER_HEIGHT = 80;
     
         public BookResultPanel(Book book) {
             setLayout(new BorderLayout(14, 0));
@@ -299,7 +299,7 @@ public class GUI extends JFrame {
             // Add Roboto font
             Font robotoTitle = new Font("Roboto", Font.BOLD, 10);
             Font robotoAuthor = new Font("Roboto", Font.PLAIN, 8);
-            Font robotoBig = new Font("Roboto", Font.BOLD, 20);
+            Font robotoBig = new Font("Roboto", Font.BOLD, 14);
             Font robotoNormal = new Font("Roboto", Font.PLAIN, 14);
             Font robotoItalic = new Font("Roboto", Font.ITALIC, 12);
     
@@ -392,7 +392,7 @@ public class GUI extends JFrame {
             infoPanel.setOpaque(false);
     
             // Book title
-            JLabel titleLabel = new JLabel("<html><body style='width:320px'>" + book.title + "</body></html>");
+            JLabel titleLabel = new JLabel("<html><body style='width:420px'>" + book.title + "</body></html>");
             titleLabel.setFont(robotoBig);
             titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
