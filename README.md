@@ -5,6 +5,43 @@ This is a book-recommendation-engine that gives personalized book recommendation
 ## Prerequisites
 To execute this search engine you will need to download Docker, Maven and Elasticssearch. 
 
+## Project structure
+```
+book_recommendation_engine/
+├── .gitignore
+├── README.md
+├── book-app/
+│   ├── .mvn/
+│   ├── README.md
+│   ├── pom.xml
+│   ├── target/
+│   ├── src/
+│   │   ├── main/
+│   │   │   └── java/
+│   │   │       └── com/
+│   │   │           └── book_engine/
+│   │   │               └── app/
+│   │   │                   ├── App.java (application entry point)
+│   │   │                   ├── Book.java
+│   │   │                   ├── Bookrecommender.java
+│   │   │                   ├── Database.java
+│   │   │                   ├── GUI.java
+│   │   │                   ├── Tokenizer.java (currently not used)
+│   │   │                   └── User.java
+│   │   └── test/
+│   │       └── java/
+│   │           └── com/
+│   │               └── book_engine/
+│   │                   └── app/
+│   │                        ├── AppTest.java
+│   │                        ├── UserTest.java
+├── books/
+├── example_books/
+├── scraper/
+└── users/
+```
+
+
 ## Running the program
 Start docker with: 
 
