@@ -32,13 +32,6 @@ public class BookRecommender {
     private static double descriptionWeight = 0.2;        // description weight
     private static double authorWeight = 0.15;
 
-    /**
-     * Boost some random books with this weight
-     */
-    private static double randomBoost = 0.01;   
-
-    private static final Random random = new Random();
-
     // TODO: add more users
     static User user;
     static {
@@ -263,15 +256,15 @@ public class BookRecommender {
                 Float rating2 = u2.books.get(bookId);
                 dot += rating1 * rating2;
             }
-            normU1 += Math.sqrt(rating1 * rating1);
+            normU1 += rating1 * rating1;
         }
     
         for (Float rating2 : u2.books.values()) {
-            normU2 += Math.sqrt(rating2 * rating2);
+            normU2 += rating2 * rating2;
         }
     
         if (normU1 == 0 || normU2 == 0) return 0;
-        return dot / (normU1 * normU2);
+        return dot / (Math.sqrt(normU1) * Math.sqrt(normU2));
     }
 
     public List<User> findSimilarUsers(User targetUser, List<User> allUsers, int topN) {
@@ -320,7 +313,7 @@ public class BookRecommender {
                     String readAuthor = readBook.author.toLowerCase();
 
                     // Make a big initial query string with all titles, genres and authors of user's read and liked books
-                    query += readTitle + readGenres + readAuthor;
+                    query += readTitle + " " + String.join(" ", readGenres) + " " + readAuthor + " ";
 
                 }
 
