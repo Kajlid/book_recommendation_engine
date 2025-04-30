@@ -17,9 +17,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JComboBox;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,6 +49,13 @@ public class GUI extends JFrame {
     JMenu userMenu = new JMenu("User");
     JMenuItem quitItem = new JMenuItem("Quit");
 
+    private String lastQuery = "";
+    private int currentOffset = 0;
+    private final int PAGE_SIZE = 20;
+    private ArrayList<Book> currentResults = new ArrayList<>();
+    
+
+
     // Main panel that contains all subpanels
     //JPanel mainPanel = new JPanel(new BorderLayout(20,30));  
     JPanel mainPanel = new JPanel(new BorderLayout(10,10)); 
@@ -64,6 +71,8 @@ public class GUI extends JFrame {
 
     // Search: input field and search button
     JTextField searchInput = new JTextField(30);
+
+    private JButton loadMoreButton = new JButton("Load More Results");
     
     
     BookRecommender bookRec;
@@ -151,6 +160,17 @@ public class GUI extends JFrame {
         searchResultPane.setLayout(new ScrollPaneLayout());
         searchResultPanel.setBorder(new EmptyBorder(10,10,10,10));
         searchResultPane.setPreferredSize(new Dimension(400, 450));
+
+        // Load more button
+        loadMoreButton.setFont(new Font("Roboto", Font.BOLD, 14));
+        loadMoreButton.setBackground(new Color(180, 140, 200));
+        loadMoreButton.setForeground(Color.WHITE);
+        loadMoreButton.setFocusPainted(false);
+        loadMoreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        loadMoreButton.addActionListener(e -> loadBooksPage());
+
+        
         
         // Book content styling
         JPanel bookContentPanel = new JPanel(new BorderLayout());
@@ -248,11 +268,37 @@ public class GUI extends JFrame {
      * then the searchResultPanel is updated with the new results
      */
     private void search() {
-        String query = searchInput.getText();
+        lastQuery = searchInput.getText().trim();
         ArrayList<Book> books;
+        currentOffset = 0;
+        currentResults.clear();
+        searchResultPanel.removeAll();
+        loadBooksPage();
+    }
+
+
+    /**
+     * Function that loads the next page of books
+     * and appends them to the searchResultPanel
+     */
+    private void loadBooksPage() {
         try {
-            books = bookRec.search(query);
-            displayBookResults(books); 
+            // Search from current offset
+            ArrayList<Book> books = bookRec.search(lastQuery, currentOffset, PAGE_SIZE);
+            currentResults.addAll(books);
+            appendBookResults(books);
+    
+            currentOffset += PAGE_SIZE;
+    
+            if (books.size() < PAGE_SIZE) {
+                searchResultPanel.remove(loadMoreButton); // no more pages
+            } else {
+                // Add or move Load More button
+                searchResultPanel.remove(loadMoreButton);
+                searchResultPanel.add(Box.createVerticalStrut(10));
+                searchResultPanel.add(loadMoreButton);
+            }
+    
             searchResultPanel.revalidate();
             searchResultPanel.repaint();
         } catch (IOException e) {
@@ -260,15 +306,11 @@ public class GUI extends JFrame {
         }
     }
 
-
     /**
-     * Adds all books to a JScrollPane that contains a listener for any selected books
-     * @param books The list of books to be displayed
-     * @return JScrollPane containing the list of books
+     * Appends all books to a JScrollPane that contains a listener for any selected books
+     * @param books The list of books to be added
      */
-    public void displayBookResults(ArrayList<Book> books) {
-        searchResultPanel.removeAll(); // clear old results
-    
+    private void appendBookResults(ArrayList<Book> books) {
         for (Book book : books) {
             BookResultPanel panel = new BookResultPanel(book);
             panel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -281,7 +323,7 @@ public class GUI extends JFrame {
         }
     }
     
-
+    
     /**
      * Display the content of a book in the text area
      * @param book The book to be displayed
