@@ -15,6 +15,6 @@ public class App {
         System.out.println("Search engine is starting indexing...");
         Database database = new Database();
         BookRecommender bookRec = new BookRecommender(database);
-        GUI gui = new GUI(bookRec);
+        GUI gui = new GUI(bookRec, database.users);
     }
 }

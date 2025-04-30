@@ -31,35 +31,9 @@ public class BookRecommender {
     private static double genreWeight = 0.25;         // genre weight
     private static double descriptionWeight = 0.2;        // description weight
     private static double authorWeight = 0.15;
-
-    // TODO: add more users
-    static User user;
-    static {
-        user = new User("harry_fan");
-        user.books.put("Last Mission_Jack_Everett", 3.2f);
-    }
-
-    static User user2;
-    static {
-        user2 = new User("anna932");
-        user2.books.put("twelfth_night_william_shakespeare", 4.5f);
-        user2.books.put("how_to_teach_a_slug_to_read_susan_pearson", 3.2f);
-    }
-
-    static User user3;
-    static {
-        user3 = new User("bla");
-        user3.books.put("twelfth_night_william_shakespeare", 4.5f);
-        user3.books.put("The_Ant-Man_of_Malfen_Derek_Prior", 3.2f);
-    }
-
-    static User user4;
-    static {
-        user4 = new User("yer_a_wizard");
-        user4.books.put("Father_Unknown_Lesley_Pearse", 3.2f);
-    }
     
-
+    private User currentUser; 
+    
     private static final RestClient restClient = RestClient.builder(new HttpHost("localhost", 9200, "http")).build();
     private static final RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
     private static final ElasticsearchClient client = new ElasticsearchClient(transport);
@@ -67,6 +41,7 @@ public class BookRecommender {
     
     public BookRecommender(Database database){
         this.database = database;
+        this.currentUser = database.users.get(0);
     }
     
     
@@ -136,7 +111,7 @@ public class BookRecommender {
         }
 
         // User influence bonus (based on personal preferences)
-        for (Map.Entry<String, Float> entry : user.books.entrySet()) {
+        for (Map.Entry<String, Float> entry : currentUser.books.entrySet()) {
             if (entry.getValue() >= 4.0) {   // Only consider books user rated relatively high
                 Book readBook = database.getBookByID(entry.getKey());   
                 if (readBook != null) {
@@ -168,7 +143,8 @@ public class BookRecommender {
         }
 
         // Collaborative filtering preference bonus (find similar users and their read books)
-        List<User> similarUsers = findSimilarUsers(user, Arrays.asList(user2, user3, user4), 3);
+        // TODO: filter out current user among similar users
+        List<User> similarUsers = findSimilarUsers(this.currentUser, database.users, 3);
         for (User similarUser : similarUsers) {
             for (Map.Entry<String, Float> entry : similarUser.books.entrySet()) {
                 if (entry.getValue() >= 4.0) {
@@ -294,9 +270,23 @@ public class BookRecommender {
 
         return similarUsers;
     }
-
-    public ArrayList<Book> initialRecommendations(User user) throws IOException {
-        HashMap<String, Float> read_books = user.books;
+    
+    private User getUserFromUsername(String username){
+        User userChosen = null;
+        for (User user: database.users){
+            if ((user.username).equals(username)){
+                userChosen = user;
+            }
+        }
+        return userChosen;
+    }
+    
+    public ArrayList<Book> initialRecommendations(String username) throws IOException {
+        currentUser = getUserFromUsername(username);
+        if (currentUser == null || username.equals("Guest user")) {
+            return new ArrayList<>();  // Return empty if user not found
+        }
+        HashMap<String, Float> read_books = currentUser.books;
         ArrayList<Book> recommendedBooks = new ArrayList<>();
         String query = "";
 
@@ -305,13 +295,15 @@ public class BookRecommender {
             if (entry.getValue() >= 4.0) {
                 Book readBook = database.getBookByID(entry.getKey());   
                 if (readBook != null) {
-                    String readTitle = readBook.title.toLowerCase();
+                    // String readTitle = readBook.title.toLowerCase();
                     ArrayList readGenres = readBook.genres;
-                    String readAuthor = readBook.author.toLowerCase();
+                    // String readAuthor = readBook.author.toLowerCase();
 
                     // Make a big initial query string with all titles, genres and authors of user's read and liked books
-                    query += readTitle + " " + String.join(" ", readGenres) + " " + readAuthor + " ";
-
+                    // query += readTitle + " " + String.join(" ", readGenres) + " " + readAuthor + " ";
+                    query += String.join(" ", readGenres);
+                    
+                    break;
                 }
 
             }
@@ -333,7 +325,7 @@ public class BookRecommender {
          * Remove book from recommendations if the user has read it already
          * */ 
         for (Book b : retrievedBooks) {
-            if (!user.books.containsKey(b.id)) {
+            if (!currentUser.books.containsKey(b.id)) {
                 relevantBooks.add(b); 
             }
         } 

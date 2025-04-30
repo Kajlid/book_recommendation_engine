@@ -43,6 +43,7 @@ import javax.swing.border.EmptyBorder;
 */
 public class GUI extends JFrame {
 
+    String currentUserName = "Guest user";
     // Menus
     JMenuBar menuBar = new JMenuBar();
     JMenu searchMenu = new JMenu("Search");
@@ -67,10 +68,12 @@ public class GUI extends JFrame {
     
     
     BookRecommender bookRec;
+    ArrayList<User> users; 
 
-    public GUI(BookRecommender bookRec) { 
+    public GUI(BookRecommender bookRec, ArrayList<User> users) { 
         //this.database = database;
         this.bookRec = bookRec;
+        this.users = users;
 
         // Set up the window attributes
         setTitle("Book recommendation system");
@@ -115,11 +118,9 @@ public class GUI extends JFrame {
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.addActionListener(e -> search());
 
-        String[] users = { "User 1", "User 2", "User 3", "User 4",
-                         "User 5", "User 6" };
+        String[] usernames = getUsernames();
 
-
-        final JComboBox<String> cb = new JComboBox<String>(users);
+        final JComboBox<String> cb = new JComboBox<String>(usernames);
 
         cb.setMaximumSize(cb.getPreferredSize());
         cb.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -128,6 +129,7 @@ public class GUI extends JFrame {
             String selectedUser = (String) cb.getSelectedItem();
             if (selectedUser != null) {
                 System.out.println("Selected User: " + selectedUser);
+                displayInitialRecommendations(selectedUser);
 
             }
         });
@@ -202,7 +204,7 @@ public class GUI extends JFrame {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBackground(new Color(255, 226, 254));
         topPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 20));
+        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 18));
         welcomeLabel.setBorder(new EmptyBorder(8, 0, 8, 0));
         topPanel.add(welcomeLabel);
         topPanel.add(searchPanel);
@@ -221,12 +223,26 @@ public class GUI extends JFrame {
         setVisible(true); // Make it visible
     }
 
+    private String[] getUsernames(){
+        String[] usernames = new String[users.size()];
+        // usernames[0] = "Select a user";
+        int i = 0;
+        for (User user: this.users){
+            usernames[i] = user.username;
+            i++;
+        }
+        return usernames;
+    }
     /**
      * Search action
      */
     private Action getSearchAction() {
         return new AbstractAction() {
             public void actionPerformed( ActionEvent e ) {
+                // if (currentUserName.equals("Select a user")){
+                //     System.out.println("A user needs to be selected ")
+                //     return;
+                // }
                 // Empty the results window
                 searchResultPanel.removeAll();
 
@@ -240,6 +256,22 @@ public class GUI extends JFrame {
             }
         };
     } 
+
+    private void displayInitialRecommendations(String selectedUser){
+        try {
+            //if (!selectedUser.equals("Select a user")){
+            currentUserName = selectedUser;
+            ArrayList<Book> initialBooks = bookRec.initialRecommendations(currentUserName);
+            displayBookResults(initialBooks); 
+            searchResultPanel.revalidate();
+            searchResultPanel.repaint();
+            //} else {
+            //    System.out.println("Select a user");
+            //}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Function that is called every time a user makes a search 

@@ -210,7 +210,7 @@ public class Database {
      * Note: indexing must be done before calling this function
      */
     public void addUserData(){
-        
+        users.add(new User("Guest user"));
         for (int i=0; ; i++){ //infinite loop that breaks when no more file is found
             String filename = String.format("../users/user%d.txt", i);
             File file = new File(filename);

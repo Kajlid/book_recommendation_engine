@@ -1,9 +1,9 @@
 package com.book_engine.app;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class User{
     public String username;
-    public HashMap<String, Float> books = new HashMap<String, Float>(); // bookid to personal rating
+    public LinkedHashMap<String, Float> books = new LinkedHashMap<String, Float>(); // bookid to personal rating
 
     public User(String name){
         this.username = name;
