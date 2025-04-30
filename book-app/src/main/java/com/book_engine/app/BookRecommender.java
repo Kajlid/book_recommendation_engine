@@ -36,7 +36,6 @@ public class BookRecommender {
     static User user;
     static {
         user = new User("harry_fan");
-        user.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
         user.books.put("Last Mission_Jack_Everett", 3.2f);
     }
 
@@ -57,7 +56,6 @@ public class BookRecommender {
     static User user4;
     static {
         user4 = new User("yer_a_wizard");
-        user4.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
         user4.books.put("Father_Unknown_Lesley_Pearse", 3.2f);
     }
     
@@ -176,7 +174,6 @@ public class BookRecommender {
                 if (entry.getValue() >= 4.0) {
                     Book likedBook = database.getBookByID(entry.getKey());
                     if (likedBook != null) {
-
                         // If a similar user has read and liked books of specific genres or authors, boost books of those genres and authors
                         for (String genre : b.genres) {
                             if (likedBook.genres.contains(genre.toLowerCase().trim())) {
@@ -321,7 +318,7 @@ public class BookRecommender {
                 
         }
 
-        recommendedBooks = database.getDataForQuery(query);
+        recommendedBooks = search(query);
 
         return recommendedBooks;
 
