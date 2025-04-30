@@ -174,7 +174,6 @@ public class BookRecommender {
                 if (entry.getValue() >= 4.0) {
                     Book likedBook = database.getBookByID(entry.getKey());
                     if (likedBook != null) {
-
                         // If a similar user has read and liked books of specific genres or authors, boost books of those genres and authors
                         for (String genre : b.genres) {
                             if (likedBook.genres.contains(genre.toLowerCase().trim())) {
