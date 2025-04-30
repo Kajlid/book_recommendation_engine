@@ -304,7 +304,7 @@ public class BookRecommender {
             // Only if the user rated the book high does it contribute to recommendations
             if (entry.getValue() >= 4.0) {
                 Book readBook = database.getBookByID(entry.getKey());   
-                if (readBook != null && !user.books.containsKey(readBook.id)) {
+                if (readBook != null) {
                     String readTitle = readBook.title.toLowerCase();
                     ArrayList readGenres = readBook.genres;
                     String readAuthor = readBook.author.toLowerCase();
@@ -318,7 +318,7 @@ public class BookRecommender {
                 
         }
 
-        recommendedBooks = database.getDataForQuery(query);
+        recommendedBooks = search(query);
 
         return recommendedBooks;
 
