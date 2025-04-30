@@ -176,7 +176,7 @@ public class Database {
             // Perform a multi_match search query on relevant fields
             SearchRequest searchRequest = new SearchRequest.Builder()
                 .index(indexName)
-                .query(q -> q.multiMatch(m -> m.query(query).fields("title", "description", "genres")))
+                .query(q -> q.multiMatch(m -> m.query(query).fields("title", "description", "genres", "author")))
                 .size(500) // Limit the number of search results
                 .build();
 
