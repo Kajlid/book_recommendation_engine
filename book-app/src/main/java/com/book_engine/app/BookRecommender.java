@@ -36,7 +36,6 @@ public class BookRecommender {
     static User user;
     static {
         user = new User("harry_fan");
-        user.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
         user.books.put("Last Mission_Jack_Everett", 3.2f);
     }
 
@@ -57,7 +56,6 @@ public class BookRecommender {
     static User user4;
     static {
         user4 = new User("yer_a_wizard");
-        user4.books.put("Harry Potter and the Half-Blood Prince_J.K._Rowling", 4.5f);
         user4.books.put("Father_Unknown_Lesley_Pearse", 3.2f);
     }
     
@@ -307,7 +305,7 @@ public class BookRecommender {
             // Only if the user rated the book high does it contribute to recommendations
             if (entry.getValue() >= 4.0) {
                 Book readBook = database.getBookByID(entry.getKey());   
-                if (readBook != null) {
+                if (readBook != null && !user.books.containsKey(readBook.id)) {
                     String readTitle = readBook.title.toLowerCase();
                     ArrayList readGenres = readBook.genres;
                     String readAuthor = readBook.author.toLowerCase();
