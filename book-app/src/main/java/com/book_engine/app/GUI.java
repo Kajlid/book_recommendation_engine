@@ -123,6 +123,7 @@ public class GUI extends JFrame {
 
         searchButton.setFont(new Font("Roboto", Font.BOLD, 18));
         searchButton.setBackground(new Color(140, 90, 160));
+        searchButton.setOpaque(true);
         searchButton.setForeground(Color.WHITE);
         searchButton.setFocusPainted(false);
         searchButton.setBorder(BorderFactory.createEmptyBorder(10, 24, 10, 24));
@@ -168,7 +169,8 @@ public class GUI extends JFrame {
         // Load more button
         loadMoreButton.setFont(new Font("Roboto", Font.BOLD, 14));
         loadMoreButton.setBackground(new Color(180, 140, 200));
-        loadMoreButton.setForeground(Color.WHITE);
+        searchButton.setOpaque(true);
+        loadMoreButton.setForeground(Color.BLACK);
         loadMoreButton.setFocusPainted(false);
         loadMoreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -276,16 +278,19 @@ public class GUI extends JFrame {
      * query 
      */
     private void displayInitialRecommendations(String selectedUser){
+        searchResultPanel.removeAll();  // clear old results
         try {
             currentUserName = selectedUser;
             ArrayList<Book> initialBooks = bookRec.initialRecommendations(currentUserName);
-            displayBookResults(initialBooks); 
+            appendBookResults(initialBooks); 
             searchResultPanel.revalidate();
             searchResultPanel.repaint();
             
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        
     }
 
     /**
