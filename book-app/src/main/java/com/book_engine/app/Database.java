@@ -1,14 +1,12 @@
 package com.book_engine.app;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.io.BufferedReader;
-import java.io.File;
-
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -176,14 +174,15 @@ public class Database {
     /**
      * Retrieve books filtered by a query from Elasticsearch
      */
-    public ArrayList<Book> getDataForQuery(String query) {
+    public ArrayList<Book> getDataForQuery(String query, int from, int size) {
         ArrayList<Book> bookList = new ArrayList<>();
         try {
             // Perform a multi_match search query on relevant fields
             SearchRequest searchRequest = new SearchRequest.Builder()
                 .index(indexName)
                 .query(q -> q.multiMatch(m -> m.query(query).fields("title", "description", "genres", "author")))
-                .size(500) // Limit the number of search results
+                .from(from)
+                .size(size) // Limit the number of search results
                 .build();
 
             SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);

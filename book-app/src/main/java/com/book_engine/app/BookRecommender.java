@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -318,15 +317,15 @@ public class BookRecommender {
                 
         }
 
-        recommendedBooks = search(query);
+        recommendedBooks = search(query, 0, 20);
 
         return recommendedBooks;
 
     }
     
     
-    public ArrayList<Book> search(String query) throws IOException {
-        ArrayList<Book> retrievedBooks = database.getDataForQuery(query);
+    public ArrayList<Book> search(String query, int from, int size) throws IOException {
+        ArrayList<Book> retrievedBooks = database.getDataForQuery(query, from, size);
         ArrayList<Book> relevantBooks = new ArrayList<>();
 
         /** 
