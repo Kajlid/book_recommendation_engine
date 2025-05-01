@@ -43,6 +43,7 @@ import javax.swing.border.EmptyBorder;
 */
 public class GUI extends JFrame {
 
+    String currentUserName = "Guest user";
     // Menus
     JMenuBar menuBar = new JMenuBar();
     JMenu searchMenu = new JMenu("Search");
@@ -57,7 +58,6 @@ public class GUI extends JFrame {
 
 
     // Main panel that contains all subpanels
-    //JPanel mainPanel = new JPanel(new BorderLayout(20,30));  
     JPanel mainPanel = new JPanel(new BorderLayout(10,10)); 
     //Panel for search results
     JPanel searchResultPanel = new JPanel(); 
@@ -76,10 +76,15 @@ public class GUI extends JFrame {
     
     
     BookRecommender bookRec;
+    ArrayList<User> users; 
 
-    public GUI(BookRecommender bookRec) { 
-        //this.database = database;
+    public GUI(BookRecommender bookRec, ArrayList<User> users) { 
+        // Set system properties for higher font resolution
+        System.setProperty("awt.useSystemAAFontSettings", "on");
+        System.setProperty("swing.aatext", "true");
+        
         this.bookRec = bookRec;
+        this.users = users;
 
         // Set up the window attributes
         setTitle("Book recommendation system");
@@ -118,17 +123,16 @@ public class GUI extends JFrame {
 
         searchButton.setFont(new Font("Roboto", Font.BOLD, 18));
         searchButton.setBackground(new Color(140, 90, 160));
+        searchButton.setOpaque(true);
         searchButton.setForeground(Color.WHITE);
         searchButton.setFocusPainted(false);
         searchButton.setBorder(BorderFactory.createEmptyBorder(10, 24, 10, 24));
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.addActionListener(e -> search());
 
-        String[] users = { "User 1", "User 2", "User 3", "User 4",
-                         "User 5", "User 6" };
+        String[] usernames = getUsernames();
 
-
-        final JComboBox<String> cb = new JComboBox<String>(users);
+        final JComboBox<String> cb = new JComboBox<String>(usernames);
 
         cb.setMaximumSize(cb.getPreferredSize());
         cb.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -137,6 +141,7 @@ public class GUI extends JFrame {
             String selectedUser = (String) cb.getSelectedItem();
             if (selectedUser != null) {
                 System.out.println("Selected User: " + selectedUser);
+                displayInitialRecommendations(selectedUser);
 
             }
         });
@@ -164,7 +169,8 @@ public class GUI extends JFrame {
         // Load more button
         loadMoreButton.setFont(new Font("Roboto", Font.BOLD, 14));
         loadMoreButton.setBackground(new Color(180, 140, 200));
-        loadMoreButton.setForeground(Color.WHITE);
+        searchButton.setOpaque(true);
+        loadMoreButton.setForeground(Color.BLACK);
         loadMoreButton.setFocusPainted(false);
         loadMoreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -210,8 +216,6 @@ public class GUI extends JFrame {
         });
         
 
-
-
         // Action for quitting
         quitItem.addActionListener(e -> System.exit(0));
 
@@ -222,7 +226,7 @@ public class GUI extends JFrame {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBackground(new Color(255, 226, 254));
         topPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 20));
+        welcomeLabel.setFont(new Font("Roboto", Font.BOLD, 18));
         welcomeLabel.setBorder(new EmptyBorder(8, 0, 8, 0));
         topPanel.add(welcomeLabel);
         topPanel.add(searchPanel);
@@ -230,23 +234,30 @@ public class GUI extends JFrame {
         mainPanel.add(topPanel, BorderLayout.PAGE_START);
         mainPanel.add(splitPane, BorderLayout.CENTER);
 
-
         searchResultPanel.setOpaque(true);
         searchResultPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //mainPanel.add(searchResultPane, BorderLayout.CENTER);
-        //mainPanel.add(bookContentPane, BorderLayout.PAGE_END);
 
         mainPanel.setBackground(new java.awt.Color(255, 191, 254));
         setVisible(true); // Make it visible
     }
 
+    private String[] getUsernames(){
+        String[] usernames = new String[users.size()];
+
+        int i = 0;
+        for (User user: this.users){
+            usernames[i] = user.username;
+            i++;
+        }
+        return usernames;
+    }
     /**
      * Search action
      */
     private Action getSearchAction() {
         return new AbstractAction() {
             public void actionPerformed( ActionEvent e ) {
+                
                 // Empty the results window
                 searchResultPanel.removeAll();
 
@@ -260,6 +271,27 @@ public class GUI extends JFrame {
             }
         };
     } 
+
+    /**
+     * When a new user is selected, book recommendations are shown
+     * based on the users previously read books but without a specific 
+     * query 
+     */
+    private void displayInitialRecommendations(String selectedUser){
+        searchResultPanel.removeAll();  // clear old results
+        try {
+            currentUserName = selectedUser;
+            ArrayList<Book> initialBooks = bookRec.initialRecommendations(currentUserName);
+            appendBookResults(initialBooks); 
+            searchResultPanel.revalidate();
+            searchResultPanel.repaint();
+            
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        
+    }
 
     /**
      * Function that is called every time a user makes a search 
@@ -339,7 +371,7 @@ public class GUI extends JFrame {
      * @return A string of stars representing the rating
      */
     public static String getStarString(double rating) {
-        int stars = (int) Math.round(rating); // round to nearest whole star
+        int stars = (int) Math.round(rating);  // round rating to nearest integer
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < stars; i++) sb.append("★");
         for (int i = stars; i < 5; i++) sb.append("☆");
@@ -444,8 +476,6 @@ public class GUI extends JFrame {
                 
             };
             coverPanel.setPreferredSize(new Dimension(COVER_WIDTH, COVER_HEIGHT));
-            //coverPanel.setMinimumSize(coverPanel.getPreferredSize());
-            //coverPanel.setMaximumSize(coverPanel.getPreferredSize());
     
             // Info Panel with title, author and rating
             JPanel infoPanel = new JPanel();

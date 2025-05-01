@@ -24,7 +24,9 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+/**
+ * Class Database that indexes the books-dataset and the user data
+ */import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 
 public class Database {
@@ -209,7 +211,7 @@ public class Database {
      * Note: indexing must be done before calling this function
      */
     public void addUserData(){
-        
+        users.add(new User("Guest user"));
         for (int i=0; ; i++){ //infinite loop that breaks when no more file is found
             String filename = String.format("../users/user%d.txt", i);
             File file = new File(filename);

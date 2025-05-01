@@ -2,6 +2,10 @@ package com.book_engine.app;
 
 import java.util.ArrayList;
 
+/**
+ * Class Book that stores book information
+ * - Is comparable for sorting
+ */
 public class Book implements Comparable<Book> {
     public String title;
     public String author;
