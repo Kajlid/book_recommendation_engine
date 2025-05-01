@@ -26,15 +26,13 @@ book_recommendation_engine/
 │   │   │                   ├── Bookrecommender.java
 │   │   │                   ├── Database.java
 │   │   │                   ├── GUI.java
-│   │   │                   ├── Tokenizer.java (currently not used)
 │   │   │                   └── User.java
 │   │   └── test/
 │   │       └── java/
 │   │           └── com/
 │   │               └── book_engine/
 │   │                   └── app/
-│   │                        ├── AppTest.java
-│   │                        ├── UserTest.java
+│   │                        └── AppTest.java 
 ├── books/
 ├── example_books/
 ├── scraper/
