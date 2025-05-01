@@ -26,7 +26,9 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+/**
+ * Class Database that indexes the books-dataset and the user data
+ */import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 
 public class Database {

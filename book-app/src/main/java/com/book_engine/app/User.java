@@ -1,6 +1,10 @@
 package com.book_engine.app;
 import java.util.LinkedHashMap;
 
+/**
+ * Class User that stores a users read books and their 
+ * personal ratings
+ */
 public class User{
     public String username;
     public LinkedHashMap<String, Float> books = new LinkedHashMap<String, Float>(); // bookid to personal rating

@@ -51,7 +51,6 @@ public class GUI extends JFrame {
     JMenuItem quitItem = new JMenuItem("Quit");
 
     // Main panel that contains all subpanels
-    //JPanel mainPanel = new JPanel(new BorderLayout(20,30));  
     JPanel mainPanel = new JPanel(new BorderLayout(10,10)); 
     //Panel for search results
     JPanel searchResultPanel = new JPanel(); 
@@ -71,7 +70,10 @@ public class GUI extends JFrame {
     ArrayList<User> users; 
 
     public GUI(BookRecommender bookRec, ArrayList<User> users) { 
-        //this.database = database;
+        // Set system properties for higher font resolution
+        System.setProperty("awt.useSystemAAFontSettings", "on");
+        System.setProperty("swing.aatext", "true");
+        
         this.bookRec = bookRec;
         this.users = users;
 
@@ -192,8 +194,6 @@ public class GUI extends JFrame {
         });
         
 
-
-
         // Action for quitting
         quitItem.addActionListener(e -> System.exit(0));
 
@@ -212,12 +212,8 @@ public class GUI extends JFrame {
         mainPanel.add(topPanel, BorderLayout.PAGE_START);
         mainPanel.add(splitPane, BorderLayout.CENTER);
 
-
         searchResultPanel.setOpaque(true);
         searchResultPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //mainPanel.add(searchResultPane, BorderLayout.CENTER);
-        //mainPanel.add(bookContentPane, BorderLayout.PAGE_END);
 
         mainPanel.setBackground(new java.awt.Color(255, 191, 254));
         setVisible(true); // Make it visible
@@ -225,7 +221,7 @@ public class GUI extends JFrame {
 
     private String[] getUsernames(){
         String[] usernames = new String[users.size()];
-        // usernames[0] = "Select a user";
+
         int i = 0;
         for (User user: this.users){
             usernames[i] = user.username;
@@ -239,10 +235,7 @@ public class GUI extends JFrame {
     private Action getSearchAction() {
         return new AbstractAction() {
             public void actionPerformed( ActionEvent e ) {
-                // if (currentUserName.equals("Select a user")){
-                //     System.out.println("A user needs to be selected ")
-                //     return;
-                // }
+                
                 // Empty the results window
                 searchResultPanel.removeAll();
 
@@ -257,17 +250,19 @@ public class GUI extends JFrame {
         };
     } 
 
+    /**
+     * When a new user is selected, book recommendations are shown
+     * based on the users previously read books but without a specific 
+     * query 
+     */
     private void displayInitialRecommendations(String selectedUser){
         try {
-            //if (!selectedUser.equals("Select a user")){
             currentUserName = selectedUser;
             ArrayList<Book> initialBooks = bookRec.initialRecommendations(currentUserName);
             displayBookResults(initialBooks); 
             searchResultPanel.revalidate();
             searchResultPanel.repaint();
-            //} else {
-            //    System.out.println("Select a user");
-            //}
+            
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -299,7 +294,7 @@ public class GUI extends JFrame {
      * @return JScrollPane containing the list of books
      */
     public void displayBookResults(ArrayList<Book> books) {
-        searchResultPanel.removeAll(); // clear old results
+        searchResultPanel.removeAll();  // clear old results
     
         for (Book book : books) {
             BookResultPanel panel = new BookResultPanel(book);
@@ -329,7 +324,7 @@ public class GUI extends JFrame {
      * @return A string of stars representing the rating
      */
     public static String getStarString(double rating) {
-        int stars = (int) Math.round(rating); // round to nearest whole star
+        int stars = (int) Math.round(rating);  // round rating to nearest integer
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < stars; i++) sb.append("★");
         for (int i = stars; i < 5; i++) sb.append("☆");
@@ -434,8 +429,6 @@ public class GUI extends JFrame {
                 
             };
             coverPanel.setPreferredSize(new Dimension(COVER_WIDTH, COVER_HEIGHT));
-            //coverPanel.setMinimumSize(coverPanel.getPreferredSize());
-            //coverPanel.setMaximumSize(coverPanel.getPreferredSize());
     
             // Info Panel with title, author and rating
             JPanel infoPanel = new JPanel();
