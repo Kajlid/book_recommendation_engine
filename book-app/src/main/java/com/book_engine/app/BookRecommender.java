@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.TermvectorsResponse;
@@ -81,16 +82,14 @@ public class BookRecommender {
         
         for (String word: words) {
             // Set title_score 
-            // boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
-            // if (found_title) {
-            //     title_score += 1;
-            // }
-
             title_score += getTFIDFScore(database.indexName, b.id, word, "title");
 
-            // If exact title match, boost score
-            if (normalizedTitle.equals(normalizedQuery)) {
-                title_score += 5; 
+            // If almost exact title match, boost score
+            LevenshteinDistance distance = new LevenshteinDistance();
+            int editDistanceTitle = distance.apply(normalizedTitle, normalizedQuery);
+
+            if (editDistanceTitle <= 3) {
+                title_score += 5;  // treat as a title match
             }
 
             boolean found_genre = genres.stream().anyMatch(w -> w.toLowerCase().contains(word.toLowerCase()));
@@ -101,10 +100,11 @@ public class BookRecommender {
             if (normalizedAuthor.contains(word)) {
                 author_score += 1;
             }
-            
-            // If exact author match, boost score
-            if (normalizedAuthor.equals(normalizedQuery)) {
-                author_score += 5;
+
+            // If almost exact author match, boost score
+            int editDistanceAuthor = distance.apply(normalizedAuthor, normalizedQuery);
+            if (editDistanceAuthor <= 3) {
+                author_score += 5;  // treat as an author match
             }
 
             description_score += getTFIDFScore(database.indexName, b.id, word, "description");
