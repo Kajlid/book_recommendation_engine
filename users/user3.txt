@@ -1,4 +1,4 @@
-Elin
+dystopian_nerd
 mockingjay_suzanne_collins 5
 everything_i_know_about_love_dolly_alderton 4
 milk_and_honey_rupi_kaur 4
@@ -11,3 +11,4 @@ catching_fire_suzanne_collins 5
 the_maze_runner_james_dashner 4
 the_hunger_games_suzanne_collins 5
 illuminae_amie_kaufman 3
+the_scorch_trials_james_dashner 5

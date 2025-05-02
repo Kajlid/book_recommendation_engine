@@ -6,14 +6,17 @@
  */  
 
 package com.book_engine.app;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
@@ -63,7 +66,7 @@ public class BookRecommender {
         double rating_boost = 0;
         if (b.average_rating != null) {
             try {
-                rating_boost = Math.abs(Double.parseDouble(b.average_rating)- 1.0);     // highly rated books should get a higher score
+                rating_boost = Math.log(Math.abs(Double.parseDouble(b.average_rating)));     // highly rated books should get a higher score
             }
             catch (Exception e) {
                 rating_boost = 0;
@@ -81,14 +84,14 @@ public class BookRecommender {
         
         for (String word: words) {
             // Set title_score 
-            boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
-            if (found_title) {
-                title_score += 1;
-            }
+            title_score += getTFIDFScore(database.indexName, b.id, word, "title");
 
-            // If exact title match, boost score
-            if (normalizedTitle.equals(normalizedQuery)) {
-                title_score += 5; 
+            // If almost exact title match, boost score
+            LevenshteinDistance distance = new LevenshteinDistance();
+            int editDistanceTitle = distance.apply(normalizedTitle, normalizedQuery);
+
+            if (editDistanceTitle <= 3) {
+                title_score += 5;  // treat as a title match
             }
 
             boolean found_genre = genres.stream().anyMatch(w -> w.toLowerCase().contains(word.toLowerCase()));
@@ -99,13 +102,14 @@ public class BookRecommender {
             if (normalizedAuthor.contains(word)) {
                 author_score += 1;
             }
-            
-            // If exact author match, boost score
-            if (normalizedAuthor.equals(normalizedQuery)) {
-                author_score += 5;
+
+            // If almost exact author match, boost score
+            int editDistanceAuthor = distance.apply(normalizedAuthor, normalizedQuery);
+            if (editDistanceAuthor <= 3) {
+                author_score += 5;  // treat as an author match
             }
 
-            description_score += getTFIDFScore(database.indexName, b.id, word);
+            description_score += getTFIDFScore(database.indexName, b.id, word, "description");
         }
 
         // User influence bonus (based on personal preferences)
@@ -172,7 +176,7 @@ public class BookRecommender {
         b.score = total_score;
     }
 
-    private double getTFIDFScore(String indexName, String docId, String term) throws IOException { 
+    private double getTFIDFScore(String indexName, String docId, String term, String field) throws IOException { 
         // Get term vectors from Elasticsearch for the specified document and field
         TermvectorsResponse response = client.termvectors(tv -> tv
             .index(indexName)
@@ -189,7 +193,7 @@ public class BookRecommender {
         long totalDocs = countResponse.count();
     
         // Access term vector for the description field
-        co.elastic.clients.elasticsearch.core.termvectors.TermVector tv = response.termVectors().get("description");
+        co.elastic.clients.elasticsearch.core.termvectors.TermVector tv = response.termVectors().get(field);
         if (tv == null || tv.terms() == null || !tv.terms().containsKey(term)) {
             return 0.0;  // Term not found in the document or term vectors missing
         }
@@ -244,10 +248,10 @@ public class BookRecommender {
         for (User other : allUsers) {
             if (other.username.equals(targetUser.username)) continue;  // skip self
             double sim = computeCosineSimilarity(targetUser, other);
-            if (sim > 0.5) {  // threshold for similarity (adding users to neighborhood)
-                similarUsers.add(other);
-                similarities.add(sim);
-            }
+            
+            similarUsers.add(other);
+            similarities.add(sim);
+            
         }
     
         // Sort users by similarity descending
@@ -305,6 +309,40 @@ public class BookRecommender {
         }
 
         recommendedBooks = search(query, 0, 20);
+        User mostSimilarUser;
+
+        try {
+            mostSimilarUser = findSimilarUsers(this.currentUser, database.users, 1).get(0);
+        }
+
+        catch(Exception e) {
+            mostSimilarUser = null;
+        }
+
+        if (mostSimilarUser != null) {
+            System.out.println("Found most similar user: " + mostSimilarUser.username); // For demo 
+            LinkedHashMap<String, Float> books = mostSimilarUser.books;
+            LinkedHashMap<String, Float> sortedBooks = new LinkedHashMap<>();
+            books.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Float>comparingByValue().reversed())
+                .forEachOrdered(entry -> sortedBooks.put(entry.getKey(), entry.getValue()));
+
+                // Put books recommended by similar users at predefined indices
+                int i = 1;
+                for (Map.Entry<String,Float> entry : sortedBooks.entrySet()) {
+                    if (!currentUser.books.containsKey(entry.getKey())) {   // If the user has not already read book
+                        recommendedBooks.add(i, database.getBookByID(entry.getKey()));
+                        i += 2;
+                    }
+                    
+                    if (i > 5) { // only add 3 books from similar user 
+                        break;
+                    }
+                    
+                } 
+
+        }
 
         return recommendedBooks;
 
