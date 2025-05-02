@@ -11,3 +11,5 @@ the_bfg_roald_dahl 3
 diary_of_a_wimpy_kid_jeff_kinney 3
 the_tale_of_despereaux_kate_dicamillo 4
 bridge_to_terabithia_katherine_paterson 5
+six_of_crows_leigh_bardugo 4
+catching_fire_suzanne_collins 4

@@ -6,17 +6,19 @@
  */  
 
 package com.book_engine.app;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.TermvectorsResponse;
@@ -64,7 +66,7 @@ public class BookRecommender {
         double rating_boost = 0;
         if (b.average_rating != null) {
             try {
-                rating_boost = Math.abs(Double.parseDouble(b.average_rating)- 1.0);     // highly rated books should get a higher score
+                rating_boost = Math.log(Math.abs(Double.parseDouble(b.average_rating)));     // highly rated books should get a higher score
             }
             catch (Exception e) {
                 rating_boost = 0;
@@ -246,10 +248,10 @@ public class BookRecommender {
         for (User other : allUsers) {
             if (other.username.equals(targetUser.username)) continue;  // skip self
             double sim = computeCosineSimilarity(targetUser, other);
-            if (sim > 0.5) {  // threshold for similarity (adding users to neighborhood)
-                similarUsers.add(other);
-                similarities.add(sim);
-            }
+            
+            similarUsers.add(other);
+            similarities.add(sim);
+            
         }
     
         // Sort users by similarity descending
@@ -307,6 +309,40 @@ public class BookRecommender {
         }
 
         recommendedBooks = search(query, 0, 20);
+        User mostSimilarUser;
+
+        try {
+            mostSimilarUser = findSimilarUsers(this.currentUser, database.users, 1).get(0);
+        }
+
+        catch(Exception e) {
+            mostSimilarUser = null;
+        }
+
+        if (mostSimilarUser != null) {
+            System.out.println("Found most similar user: " + mostSimilarUser.username); // For demo 
+            LinkedHashMap<String, Float> books = mostSimilarUser.books;
+            LinkedHashMap<String, Float> sortedBooks = new LinkedHashMap<>();
+            books.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(entry -> sortedBooks.put(entry.getKey(), entry.getValue()));
+
+                // Put books recommended by similar users at predefined indices
+                int i = 1;
+                for (Map.Entry<String,Float> entry : sortedBooks.entrySet()) {
+                    if (!currentUser.books.containsKey(entry.getKey())) {   // If the user has not already read book
+                        recommendedBooks.add(i, database.getBookByID(entry.getKey()));
+                        i += 2;
+                    }
+                    
+                    if (i > 5) { // only add 3 books from similar user 
+                        break;
+                    }
+                    
+                } 
+
+        }
 
         return recommendedBooks;
 
