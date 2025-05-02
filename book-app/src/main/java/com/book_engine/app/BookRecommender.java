@@ -248,9 +248,13 @@ public class BookRecommender {
         for (User other : allUsers) {
             if (other.username.equals(targetUser.username)) continue;  // skip self
             double sim = computeCosineSimilarity(targetUser, other);
-            
-            similarUsers.add(other);
-            similarities.add(sim);
+
+            if (!other.username.equals("Guest user")) {
+                // Guest user should never be included as similar user
+                similarUsers.add(other);
+                similarities.add(sim);
+
+            }
             
         }
     
