@@ -325,7 +325,7 @@ public class BookRecommender {
             LinkedHashMap<String, Float> sortedBooks = new LinkedHashMap<>();
             books.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.<String, Float>comparingByValue().reversed())
                 .forEachOrdered(entry -> sortedBooks.put(entry.getKey(), entry.getValue()));
 
                 // Put books recommended by similar users at predefined indices
