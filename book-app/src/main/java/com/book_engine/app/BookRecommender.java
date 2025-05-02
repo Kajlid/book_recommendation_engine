@@ -81,10 +81,12 @@ public class BookRecommender {
         
         for (String word: words) {
             // Set title_score 
-            boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
-            if (found_title) {
-                title_score += 1;
-            }
+            // boolean found_title = titleToList.stream().anyMatch(w -> w.contains(word));
+            // if (found_title) {
+            //     title_score += 1;
+            // }
+
+            title_score += getTFIDFScore(database.indexName, b.id, word, "title");
 
             // If exact title match, boost score
             if (normalizedTitle.equals(normalizedQuery)) {
@@ -105,7 +107,7 @@ public class BookRecommender {
                 author_score += 5;
             }
 
-            description_score += getTFIDFScore(database.indexName, b.id, word);
+            description_score += getTFIDFScore(database.indexName, b.id, word, "description");
         }
 
         // User influence bonus (based on personal preferences)
@@ -172,7 +174,7 @@ public class BookRecommender {
         b.score = total_score;
     }
 
-    private double getTFIDFScore(String indexName, String docId, String term) throws IOException { 
+    private double getTFIDFScore(String indexName, String docId, String term, String field) throws IOException { 
         // Get term vectors from Elasticsearch for the specified document and field
         TermvectorsResponse response = client.termvectors(tv -> tv
             .index(indexName)
@@ -189,7 +191,7 @@ public class BookRecommender {
         long totalDocs = countResponse.count();
     
         // Access term vector for the description field
-        co.elastic.clients.elasticsearch.core.termvectors.TermVector tv = response.termVectors().get("description");
+        co.elastic.clients.elasticsearch.core.termvectors.TermVector tv = response.termVectors().get(field);
         if (tv == null || tv.terms() == null || !tv.terms().containsKey(term)) {
             return 0.0;  // Term not found in the document or term vectors missing
         }
