@@ -186,6 +186,38 @@ public class Database {
                 .from(from)
                 .size(size) // Limit the number of search results
                 .build();
+            
+
+            SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
+
+            // Add relevant hits to the list
+            for (co.elastic.clients.elasticsearch.core.search.Hit<Book> hit : searchResponse.hits().hits()) {
+                Book book = hit.source();
+                if (book != null) {
+                    book.id = hit.id(); // Set ID
+                    book.score = hit.score();   // Set score
+                    bookList.add(book);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bookList;
+    }
+
+    /**
+     * Retrieve books filtered by a genre query from Elasticsearch [for initial recommendations]
+     */
+    public ArrayList<Book> getDataForGenres(String query, int from, int size) {
+        ArrayList<Book> bookList = new ArrayList<>();
+        try {
+            SearchRequest searchRequest = new SearchRequest.Builder()
+                .index(indexName)
+                .query(q -> q.multiMatch(m -> m.query(query).fields("genres", "description")))
+                .from(from)
+                .size(size) // Limit the number of search results
+                .build();
+            
 
             SearchResponse<Book> searchResponse = client.search(searchRequest, Book.class);
 

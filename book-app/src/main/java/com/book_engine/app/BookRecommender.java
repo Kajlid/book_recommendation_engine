@@ -90,7 +90,7 @@ public class BookRecommender {
             LevenshteinDistance distance = new LevenshteinDistance();
             int editDistanceTitle = distance.apply(normalizedTitle, normalizedQuery);
 
-            if (editDistanceTitle <= 3) {
+            if (editDistanceTitle <= 4) {
                 title_score += 5;  // treat as a title match
             }
 
@@ -105,7 +105,7 @@ public class BookRecommender {
 
             // If almost exact author match, boost score
             int editDistanceAuthor = distance.apply(normalizedAuthor, normalizedQuery);
-            if (editDistanceAuthor <= 3) {
+            if (editDistanceAuthor <= 4) {
                 author_score += 5;  // treat as an author match
             }
 
@@ -312,7 +312,23 @@ public class BookRecommender {
                 
         }
 
-        recommendedBooks = search(query, 0, 20);
+        ArrayList<Book> retrievedBooks = database.getDataForGenres(query, 0, 20);
+        for (Book b : retrievedBooks) {
+            if (!currentUser.books.containsKey(b.id)) {
+                recommendedBooks.add(b); 
+            }
+        } 
+        // Sort relevantBooks by average rating in descending order
+        recommendedBooks.sort((b1, b2) -> {
+            try {
+                double r1 = b1.average_rating != null ? Double.parseDouble(b1.average_rating) : 0;
+                double r2 = b2.average_rating != null ? Double.parseDouble(b2.average_rating) : 0;
+                return Double.compare(r2, r1);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        });
+
         User mostSimilarUser;
 
         try {
