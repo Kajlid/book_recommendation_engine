@@ -90,7 +90,7 @@ public class BookRecommender {
             LevenshteinDistance distance = new LevenshteinDistance();
             int editDistanceTitle = distance.apply(normalizedTitle, normalizedQuery);
 
-            if (editDistanceTitle <= 4) {
+            if (editDistanceTitle <= 3) {
                 title_score += 5;  // treat as a title match
             }
 
@@ -105,7 +105,7 @@ public class BookRecommender {
 
             // If almost exact author match, boost score
             int editDistanceAuthor = distance.apply(normalizedAuthor, normalizedQuery);
-            if (editDistanceAuthor <= 4) {
+            if (editDistanceAuthor <= 3) {
                 author_score += 5;  // treat as an author match
             }
 
