@@ -29,10 +29,10 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 public class BookRecommender {
     // Title contributes more to the search results
-    private static double titleWeight = 0.4;      // title weight
-    private static double genreWeight = 0.25;         // genre weight
+    private static double titleWeight = 0.1;      // title weight
+    private static double genreWeight = 0.7;         // genre weight
     private static double descriptionWeight = 0.1;        // description weight
-    private static double authorWeight = 0.25;
+    private static double authorWeight = 0.1;
     
     private User currentUser; 
     
@@ -94,10 +94,12 @@ public class BookRecommender {
                 title_score += 5;  // treat as a title match
             }
 
-            boolean found_genre = genres.stream().anyMatch(w -> w.toLowerCase().contains(word.toLowerCase()));
-            if (found_genre) {
-                genre_score += 1;
-            }
+            // Genre query match
+            long matchingGenres = genres.stream()
+            .filter(g -> g.toLowerCase().contains(word.toLowerCase()))
+            .count();
+
+            genre_score += matchingGenres * 3;
 
             if (normalizedAuthor.contains(word)) {
                 author_score += 1;
