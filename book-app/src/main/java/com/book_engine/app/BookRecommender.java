@@ -99,7 +99,7 @@ public class BookRecommender {
             .filter(g -> g.toLowerCase().contains(word.toLowerCase()))
             .count();
 
-            genre_score += matchingGenres * 3;
+            genre_score += matchingGenres * 1000;
 
             if (normalizedAuthor.contains(word)) {
                 author_score += 1;
