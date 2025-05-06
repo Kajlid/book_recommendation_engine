@@ -47,7 +47,6 @@ public class GUI extends JFrame {
     // Menus
     JMenuBar menuBar = new JMenuBar();
     JMenu searchMenu = new JMenu("Search");
-    JMenu userMenu = new JMenu("User");
     JMenuItem quitItem = new JMenuItem("Quit");
 
     private String lastQuery = "";
@@ -156,7 +155,6 @@ public class GUI extends JFrame {
 
         // Set up menu
         menuBar.add(searchMenu);
-        menuBar.add(userMenu);
         menuBar.add(quitItem);
         setJMenuBar(menuBar);
 
@@ -165,6 +163,7 @@ public class GUI extends JFrame {
         searchResultPane.setLayout(new ScrollPaneLayout());
         searchResultPanel.setBorder(new EmptyBorder(10,10,10,10));
         searchResultPane.setPreferredSize(new Dimension(400, 450));
+        searchResultPane.getVerticalScrollBar().setUnitIncrement(16); // faster scrolling
 
         // Load more button
         loadMoreButton.setFont(new Font("Roboto", Font.BOLD, 14));
